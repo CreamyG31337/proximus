@@ -112,7 +112,8 @@ private:
     void startGPS();
     QStringList rulesList;
     //some pointers
-    Rule1 *Ruledialog;
+    //   Rule1 *Ruledialog;
+    QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;
 

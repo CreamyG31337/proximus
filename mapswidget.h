@@ -37,13 +37,14 @@ public:
      explicit MapWindow(QPointer<QGeoPositionInfoSource> locationDataSource2 = 0, qint16 radius = 100);
     ~MapWindow();
     MapsWidget *mapsWidget;//probably shouldn't be public, but for now it is
+    qint16 radius;
 private:
     //MapsWidget *mapsWidget;
    // QGeoPositionInfoSource *positionSource;
     QPointer<QGeoPositionInfoSource> locationDataSource3;
     MarkerManager *markerManager;
     bool tracking;
-    qint16 radius;
+
 
 private slots:
     // slot to receive updates
@@ -103,6 +104,7 @@ public:
     void setMyLocation(QGeoCoordinate location, bool center=true);
     QGeoMapCircleObject *sensitivityCircle;
     QGeoCoordinate *mapCenterCoord;
+    void drawSensitivityCircle(qint16 radius);
 signals:
     void mapPanned();
 public slots:

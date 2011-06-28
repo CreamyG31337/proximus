@@ -51,9 +51,8 @@ void MapWindow::updateMyPosition(QGeoPositionInfo info)
 void MapWindow::disableTracking()
 {
     tracking = false;
-    //update circle?
-    //this->mapsWidget->
-
+    //update circle
+    this->mapsWidget->drawSensitivityCircle(radius);
 }
 
 GeoMap::GeoMap(QGeoMappingManager *manager,  MapsWidget *mapsWidget) :
@@ -169,18 +168,21 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     d->view->resize(sc->itemsBoundingRect().size().toSize());//oh fuck, finally. SOOOOOOOOO intuitive.
     //could try d->map->fitInViewport();
 
-
     connect(d->map, SIGNAL(panned()),
                  this, SIGNAL(mapPanned()));
-    mapCenterCoord = new QGeoCoordinate(d->map->center());
+    //mapCenterCoord = new QGeoCoordinate(d->map->center());
     sensitivityCircle = new QGeoMapCircleObject;
     sensitivityCircle->setMapData(d->mapdata);
-    sensitivityCircle->setCenter(*mapCenterCoord);
-    sensitivityCircle->setRadius(100);
-    sensitivityCircle->setPen(QPen(Qt::blue, 2.0));
+
+
+    sensitivityCircle->setPen(QPen(Qt::green, 2.0));
     d->map->addMapObject(sensitivityCircle);
+}
 
-
+void MapsWidget::drawSensitivityCircle(qint16 radius)
+{
+        sensitivityCircle->setCenter(d->map->center());
+        sensitivityCircle->setRadius(radius);
 }
 
 void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
@@ -325,7 +327,7 @@ class MarkerPrivate
 
  void MarkerManager::setMyLocation(QGeoCoordinate coord)
  {
-     d->myLocation->setCoordinate(coord);//segfault??
+     d->myLocation->setCoordinate(coord);
  }
  void MarkerManager::myLocationChanged(QGeoCoordinate location)
  {
@@ -349,5 +351,4 @@ class MarkerPrivate
      d->markerManager = markerManager;
      if (d->map)
          d->markerManager->setMap(d->map);
-     //d->markerManager->setStatusBar(d->statusBarItem);
  }

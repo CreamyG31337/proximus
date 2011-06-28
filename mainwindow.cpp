@@ -287,7 +287,7 @@ void MainWindow::on_btnEdit_clicked()
     if (!ui->listWidgetRules->currentItem()) return;//no item selected; could show messagebox
     if (Ruledialog == 0)
     {
-        Ruledialog =  new Rule1(topLevelWidget(), ui->listWidgetRules->currentItem()->text(),locationDataSource);
+        Ruledialog =  new Rule1(window(), ui->listWidgetRules->currentItem()->text(),locationDataSource);
     }
     #ifdef Q_OS_SYMBIAN
          Ruledialog->showFullScreen();//modeless to keep GPS running

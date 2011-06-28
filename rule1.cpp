@@ -21,12 +21,13 @@ Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource>
     MapDialog = 0;
     ui->txtRuleName->setText(RuleName);
     locationDataSource2 = locationDataSource;
-
+    this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 Rule1::~Rule1()
 {
     delete ui;
+    delete MapDialog;
 }
 
 void Rule1::on_dial_locSensitivity_valueChanged(int value)
@@ -46,7 +47,8 @@ void Rule1::on_lineEdit_locSensitivity_editingFinished()
 
 void Rule1::on_buttonBox_ruleSaveCancel_rejected()
 {
-
+    //this->close();
+    //delete this;
 }
 
 void Rule1::on_buttonBox_ruleSaveCancel_accepted()
@@ -104,6 +106,10 @@ void Rule1::on_btn_loc_fill_map_clicked()
     {
         //MapDialog =  new MapsWidget(this);
         MapDialog = new MapWindow(locationDataSource2, (qint16)strlocSens.toInt());
+    }
+    else
+    {
+        MapDialog->radius = (qint16)strlocSens.toInt();
     }
     #ifdef Q_OS_SYMBIAN
           MapDialog->showFullScreen();//modeless to keep GPS running
