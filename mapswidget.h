@@ -96,14 +96,13 @@ class MapsWidget : public QWidget
 public:
     explicit MapsWidget(QWidget *parent = 0);
     ~MapsWidget();
-
-
     void setMarkerManager(MarkerManager *markerManager);
     MarkerManager *markerManager() const;
     QGraphicsGeoMap *map() const;
     void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
-
+    QGeoMapCircleObject *sensitivityCircle;
+    QGeoCoordinate *mapCenterCoord;
 signals:
     void mapPanned();
 public slots:

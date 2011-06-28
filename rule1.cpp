@@ -100,7 +100,6 @@ void Rule1::on_btn_loc_fill_map_clicked()
     strlocSens = ui->lineEdit_locSensitivity->text();
     strlocSens.chop(1);
 
-
     if (MapDialog == 0)
     {
         //MapDialog =  new MapsWidget(this);

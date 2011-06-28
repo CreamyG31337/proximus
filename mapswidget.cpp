@@ -51,6 +51,9 @@ void MapWindow::updateMyPosition(QGeoPositionInfo info)
 void MapWindow::disableTracking()
 {
     tracking = false;
+    //update circle?
+    //this->mapsWidget->
+
 }
 
 GeoMap::GeoMap(QGeoMappingManager *manager,  MapsWidget *mapsWidget) :
@@ -106,15 +109,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pan(delta.x(), delta.y());
         emit panned();       
     }
-    //draw circle here??
-
-//    QGeoMapCircleObject *object;
-//    object->setCenter(QGeoCoordinate(-27.5796, 153.1));
-//    object->setRadius(100);
-//    object->setPen(QPen(Qt::blue, 2.0));
-
-
-
+    //update location radius circle
     event->accept();
 }
 
@@ -173,11 +168,17 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     //d->view->fitInView(sc->sceneRect());//this just scales it back down so it has no scroll bars?
     d->view->resize(sc->itemsBoundingRect().size().toSize());//oh fuck, finally. SOOOOOOOOO intuitive.
     //could try d->map->fitInViewport();
-    // Marker *me = new Marker(Marker::MyLocationMarker);
-   // me->setCoordinate(QGeoCoordinate(-27.5796, 153.1));
-   // d->map->addMapObject(me);
+
+
     connect(d->map, SIGNAL(panned()),
                  this, SIGNAL(mapPanned()));
+    mapCenterCoord = new QGeoCoordinate(d->map->center());
+    sensitivityCircle = new QGeoMapCircleObject;
+    sensitivityCircle->setMapData(d->mapdata);
+    sensitivityCircle->setCenter(*mapCenterCoord);
+    sensitivityCircle->setRadius(100);
+    sensitivityCircle->setPen(QPen(Qt::blue, 2.0));
+    d->map->addMapObject(sensitivityCircle);
 
 
 }
