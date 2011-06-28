@@ -47,7 +47,7 @@ doc/*.mxml
 patches/
 README
 *.bak
-debug/*.*
+debug/*
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
