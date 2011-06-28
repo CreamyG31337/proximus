@@ -45,7 +45,6 @@ private:
     MarkerManager *markerManager;
     bool tracking;
 
-
 private slots:
     // slot to receive updates
     void updateMyPosition(QGeoPositionInfo info);
@@ -74,6 +73,7 @@ private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 };
 
 class FixedGraphicsView : public QGraphicsView

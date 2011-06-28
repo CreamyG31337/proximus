@@ -123,4 +123,13 @@ void Rule1::on_btn_loc_fill_map_clicked()
     QGeoServiceProvider *serviceProvider = new QGeoServiceProvider(providers[0]);
     //MapDialog->initialize(serviceProvider->mappingManager());
     MapDialog->mapsWidget->initialize(serviceProvider->mappingManager());
+    //connect signal to update long/lat when map panned
+    connect(MapDialog->mapsWidget,SIGNAL(mapPanned()),
+            this, SLOT(updateLatLongFromMap()));
+}
+void Rule1::updateLatLongFromMap()
+{
+    QGeoCoordinate *mapCenterCoord = MapDialog->mapsWidget->mapCenterCoord;
+    ui->txtLocLatitude->setText(QString::number(mapCenterCoord->latitude()));
+    ui->txtLocLongitude->setText(QString::number(mapCenterCoord->longitude()));
 }

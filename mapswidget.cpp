@@ -23,12 +23,9 @@ MapWindow::MapWindow(QPointer<QGeoPositionInfoSource> locationDataSource2, qint1
 //        delete markerManager;
     //markerManager = new MarkerManager();
     mapsWidget->setMarkerManager(markerManager);
-
     connect(mapsWidget, SIGNAL(mapPanned()),
                  this, SLOT(disableTracking()));
     radius = radiusIn;
-
-
 }
 
 MapWindow::~MapWindow()
@@ -112,6 +109,22 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
+ void GeoMap::keyPressEvent(QKeyEvent *event)
+ {
+       switch (event->key()) {
+       case Qt::Key_VolumeUp:
+           if (zoomLevel() > minimumZoomLevel()) {
+               setZoomLevel(zoomLevel() - 1);
+           }
+           break;
+       case Qt::Key_VolumeDown:
+           if (zoomLevel() < maximumZoomLevel()) {
+               setZoomLevel(zoomLevel() + 1);
+           }
+           break;
+       }
+  }
+
 FixedGraphicsView::FixedGraphicsView(QGraphicsScene *scene, QWidget *parent) :
     QGraphicsView(scene, parent)
 {
@@ -170,19 +183,18 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     connect(d->map, SIGNAL(panned()),
                  this, SIGNAL(mapPanned()));
-    //mapCenterCoord = new QGeoCoordinate(d->map->center());
+    mapCenterCoord = new QGeoCoordinate(d->map->center());//init just in case
     sensitivityCircle = new QGeoMapCircleObject;
     sensitivityCircle->setMapData(d->mapdata);
-
-
     sensitivityCircle->setPen(QPen(Qt::green, 2.0));
     d->map->addMapObject(sensitivityCircle);
 }
 
 void MapsWidget::drawSensitivityCircle(qint16 radius)
 {
-        sensitivityCircle->setCenter(d->map->center());
-        sensitivityCircle->setRadius(radius);
+    *mapCenterCoord = QGeoCoordinate(d->map->center());
+    sensitivityCircle->setCenter(*mapCenterCoord);
+    sensitivityCircle->setRadius(radius);
 }
 
 void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)

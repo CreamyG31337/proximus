@@ -22,14 +22,11 @@ public:
 
 private slots:
     void on_dial_locSensitivity_valueChanged(int value);
-
     void on_lineEdit_locSensitivity_editingFinished();
-
     void on_buttonBox_ruleSaveCancel_rejected();
-
     void on_buttonBox_ruleSaveCancel_accepted();
-
     void on_btn_loc_fill_map_clicked();
+    void updateLatLongFromMap();
 
 private:
     Ui::Rule1 *ui;
