@@ -20,8 +20,11 @@ Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource>
     ui->lineEdit_locSensitivity->setValidator(validator);
     MapDialog = 0;
     ui->txtRuleName->setText(RuleName);
+    strOriginalRuleName = RuleName;
+    //save original rule name so we can tell if it's renamed
     locationDataSource2 = locationDataSource;
     this->setAttribute(Qt::WA_DeleteOnClose);
+
 }
 
 Rule1::~Rule1()
@@ -47,18 +50,36 @@ void Rule1::on_lineEdit_locSensitivity_editingFinished()
 
 void Rule1::on_buttonBox_ruleSaveCancel_rejected()
 {
-    //this->close();
-    //delete this;
+    //msgbox confirmation
 }
 
 void Rule1::on_buttonBox_ruleSaveCancel_accepted()
 {
-    QString strRuleText;
+    //save data to "/apps/Maemo/APP_NAME/
+    QString publishPath = "/apps/Maemo/ProfileAutoSwitch/rules";
+    QValueSpacePublisher* publisher;
+    publisher = new QValueSpacePublisher(QValueSpace::WritableLayer, publishPath);
+
+    if (ui->txtRuleName->text() != strOriginalRuleName)
+    {   //delete old rule
+        publisher->resetValue(strOriginalRuleName);
+    }
+    QString NewRuleName;
+    NewRuleName = ui->txtRuleName->text();
+    //sanitize NewRuleName 1st
+
+    if (ui->chkRunProgram->isChecked())
+    {
+
+    }
+    if (ui->chkSwitchProfile->isChecked())
+    {
+
+    }
     if (ui->chk_loc_enabled)
     {
-        QString strlocNOT = "";
         if (ui->chk_loc_not->isChecked())
-            strlocNOT = "!";
+            publisher->setValue(NewRuleName + "/Location/NOT",true);
         //validator takes care of most, still need to check for blanks and out of range
         if (ui->lineEdit_locSensitivity->text().isEmpty())
         {
@@ -72,18 +93,26 @@ void Rule1::on_buttonBox_ruleSaveCancel_accepted()
         QString strlocSens;
         strlocSens = ui->lineEdit_locSensitivity->text();
         strlocSens.chop(1);
-        //create short string version of rule to store
-        strRuleText = "Loc" + strlocNOT + strlocSens + " " + ui->txtLocLongitude->text() + " " + ui->txtLocLatitude->text();
+        publisher->setValue(NewRuleName + "/Location/RADIUS", strlocSens.toInt());
+        //need to check these
+        double longitude;
+        longitude = ui->txtLocLongitude->text().toDouble();
+        double latitude;
+        latitude = ui->txtLocLatitude->text().toDouble();
+        publisher->setValue(NewRuleName + "/Location/LONGITUDE", longitude);
+        publisher->setValue(NewRuleName + "/Location/LATITUDE", latitude);
     }
-    //save data to "/apps/Maemo/APP_NAME/
-    QString publishPath = "/apps/Maemo/ProfileAutoSwitch/rules";
-    QValueSpacePublisher* publisher;
-    publisher = new QValueSpacePublisher(QValueSpace::WritableLayer, publishPath);
-    //QValueSpacePublisher publisher("/Device");
-    QString strRuleName= ui->txtRuleName->text();
-    //need to sanatize this:
-    publisher->setValue(strRuleName,  (true));//enabled
+    else
+        publisher->resetValue(NewRuleName + "/Location");
 
+    if(ui->chk_time_enabled->isChecked())
+    {
+
+    }
+    if(ui->chk_calendar_enabled->isChecked())
+    {
+
+    }
 }
 
 

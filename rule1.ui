@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>729</width>
-        <height>485</height>
+        <height>483</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -43,7 +43,7 @@
             <item>
              <layout class="QFormLayout" name="formLayout">
               <item row="0" column="0">
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="chkRunProgram">
                 <property name="text">
                  <string>Run Program</string>
                 </property>
@@ -53,7 +53,7 @@
                <widget class="QLineEdit" name="lineEdit"/>
               </item>
               <item row="1" column="0">
-               <widget class="QCheckBox" name="checkBox_2">
+               <widget class="QCheckBox" name="chkSwitchProfile">
                 <property name="text">
                  <string>Switch Profile</string>
                 </property>
@@ -101,27 +101,27 @@
               </item>
               <item>
                <layout class="QGridLayout" name="gridLayout">
-                <item row="1" column="0">
+                <item row="0" column="0">
                  <widget class="QLabel" name="label_2">
                   <property name="text">
                    <string>Longitude</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="1">
                  <widget class="QLineEdit" name="txtLocLongitude"/>
                 </item>
-                <item row="2" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_3">
                   <property name="text">
                    <string>Latitude</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="1" column="1">
                  <widget class="QLineEdit" name="txtLocLatitude"/>
                 </item>
-                <item row="3" column="1">
+                <item row="2" column="1">
                  <widget class="QPushButton" name="btn_loc_fill_map">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -136,30 +136,14 @@ Map</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="label_6">
-                  <property name="text">
-                   <string>Activate when at this location</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <widget class="QLabel" name="label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
                   <property name="text">
-                   <string>Sensitivity</string>
+                   <string>Range</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -263,7 +247,7 @@ Map</string>
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Activates between these times</string>
+                   <string>Between these times</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -334,7 +318,7 @@ Map</string>
               <item>
                <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>Activate when calendar shows you are scheduled for something containing the following word(s)</string>
+                 <string>Activate when calendar event matches the following word(s)</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -359,7 +343,22 @@ Map</string>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="txtRuleName"/>
+    <layout class="QFormLayout" name="formLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="txtRuleName">
+       <property name="maxLength">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox_ruleSaveCancel">

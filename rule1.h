@@ -35,7 +35,7 @@ private:
     //qint8 RuleNumber;//# of rule we are creating or editing, passed in constructor
     QPointer<QGeoPositionInfoSource> locationDataSource2;
     //MarkerManager *markerManager;
-
+    QString strOriginalRuleName;
 //    const QRegExp rx;
 
 };
