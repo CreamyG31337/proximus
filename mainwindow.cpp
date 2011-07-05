@@ -44,9 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
         publisher->setValue("rules/example rule",false);
     }
     //update rules list if anything changes
-    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesListChanged()));
+    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesListChanged()));   
     rulesListChanged();//call once now to populate initial rules
-
 }
 
 MainWindow::~MainWindow()
@@ -111,35 +110,45 @@ void MainWindow::showExpanded()
 #endif
 }
 
-//void MainWindow::on_pushButton_clicked()
-//{
-//    locationDataSource->startUpdates();
-//}
-
-
 void MainWindow::rulesListChanged() {
-    //clear list
+    //setup memory structure used to keep track of rules being active or not
+    //also recreate qstringlist obj on screen
+    //as this DOES NOT happen often, it's okay to recreate from scratch
+    Rules.clear();
     ui->listWidgetRules->clear();
+
     //fill list
-//    rulesList = new QStringList();
-//    rulesList = rules->subPaths();
-//    if (rulesList.isEmpty())
-//            return;
-    foreach(const QString &str, subscriber->subPaths()){
-      ui->listWidgetRules->addItem(str);
+    foreach(const QString &str, subscriber->subPaths()){//for each rule
+        ui->listWidgetRules->addItem(str);//add name to screen list
+        //need some objects
+        DataLocation ruleDataLoc;
+        DataTime ruleDataTime;
+        DataCalendar ruleDataCal;
+        //fill them -- TODO: need to check if the paths exist, default them
+        ruleDataLoc.active = false;//we can default the status to false, it will be re-evaluated within a minute
+        ruleDataLoc.enabled = subscriber->value(str + "/Location").toBool();
+        ruleDataLoc.radius = subscriber->value(str + "/Location/RADIUS").toInt();
+        ruleDataLoc.location.setLongitude(subscriber->value(str + "/Location/LONGITUDE").toDouble());
+        ruleDataLoc.location.setLatitude(subscriber->value(str + "/Location/LATITUDE").toDouble());
+
+        ruleDataTime.active = false;
+        ruleDataTime.enabled = subscriber->value(str + "/Location").toBool();
+        ruleDataTime.time1 = subscriber->value(str + "/Location/RADIUS").toTime();
+        ruleDataTime.time2 = subscriber->value(str + "/Location/RADIUS").toTime();
+
+        //ruleDataCal
+
     }
+
+
 }
 
 void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
 {
     if (geoPositionInfo.isValid())
     {
-        // Stop regular position updates, because a valid position has been
-        // obtained
-        //locationDataSource->stopUpdates();
-        //actually, just slow it
+        //gps never stops
         locationDataSource->setUpdateInterval(30000);//30 sec
-
         // Get the current location as latitude and longitude
         QGeoCoordinate geoCoordinate = geoPositionInfo.coordinate();
         qreal latitude = geoCoordinate.latitude();
@@ -177,9 +186,8 @@ void MainWindow::startGPS()
     }
 }
 
-
-
-void MainWindow::initAreaMonitor()
+//loop through rules and set up area monitors tied to signals for each one. add all to a QHash.
+void MainWindow::initAreaMonitors()
 {
     // Create the area monitor
     QGeoAreaMonitor *monitor =
@@ -249,7 +257,6 @@ void MainWindow::satellitesInViewUpdated(
                    QString::number(satellites.count()));
     msgBox.exec();
 }
-
 
 void MainWindow::on_btnNewRule_clicked()
 {

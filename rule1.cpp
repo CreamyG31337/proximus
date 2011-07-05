@@ -24,7 +24,8 @@ Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource>
     //save original rule name so we can tell if it's renamed
     locationDataSource2 = locationDataSource;
     this->setAttribute(Qt::WA_DeleteOnClose);
-
+    //
+    disconnect(ui->buttonBox_ruleSaveCancel, SIGNAL(accepted()), this, SLOT(accept()));
 }
 
 Rule1::~Rule1()
@@ -107,12 +108,23 @@ void Rule1::on_buttonBox_ruleSaveCancel_accepted()
 
     if(ui->chk_time_enabled->isChecked())
     {
+        if (ui->timeEdit->time() == ui->timeEdit->time())
+        {
+             QMessageBox msgBox;
+             msgBox.setText("Times cannot be equal");
+             msgBox.setIcon(QMessageBox::Critical);
+             msgBox.exec();
+             //set flag
 
+        }
     }
     if(ui->chk_calendar_enabled->isChecked())
     {
 
     }
+    //flag == false then
+    connect(ui->buttonBox_ruleSaveCancel, SIGNAL(accepted()), this, SLOT(accept()));
+    accept();
 }
 
 

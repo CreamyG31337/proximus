@@ -25,14 +25,49 @@
 #include <QValueSpaceSubscriber>
 #include <QValueSpacePublisher>
 #include "rule1.h"
+#include <QTime>
 
 QTM_USE_NAMESPACE
-
-
 
 namespace Ui {
     class MainWindow;
 }
+
+struct DataLocation
+{
+    bool enabled;
+    bool active;//active means the conditions are all true
+    QGeoCoordinate location;
+    qint16 radius;
+};
+struct DataTime
+{
+    bool enabled;
+    bool active;
+    QTime time1;
+    QTime time2;
+};
+
+struct DataCalendar
+{
+    bool enabled;
+    bool active;
+    QString keywords;
+};
+struct RuleData
+{
+    DataLocation locationRule;
+    DataTime timeRule;
+    DataCalendar calendarRule;
+};
+struct Rule
+{
+public:
+    QString name;
+    bool enabled;
+    bool active;
+    RuleData data;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -81,7 +116,7 @@ private slots:
     /**
      * Initializes the area monitor.
      */
-    void initAreaMonitor();
+    void initAreaMonitors();
     /**
      * Starts to monitor updates in the number of satellites.
      */
@@ -111,12 +146,11 @@ private:
      */
     void startGPS();
     QStringList rulesList;
-    //some pointers
-    //   Rule1 *Ruledialog;
     QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;
-
+    QHash<QString, Rule> Rules;
 };
+
 
 #endif // MAINWINDOW_H
