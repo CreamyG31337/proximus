@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'rule1.ui'
 **
-** Created: Tue Jun 21 01:50:40 2011
+** Created: Sun Jul 10 23:27:08 2011
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -45,27 +45,26 @@ public:
     QGroupBox *groupBox_4;
     QHBoxLayout *horizontalLayout_6;
     QFormLayout *formLayout;
-    QCheckBox *checkBox;
-    QLineEdit *lineEdit;
-    QCheckBox *checkBox_2;
-    QComboBox *comboBox;
+    QCheckBox *chkRunCommand;
+    QLineEdit *txtProgram2Run;
+    QCheckBox *chkSwitchProfile;
+    QComboBox *cboProfiles;
     QGroupBox *groupBox;
     QHBoxLayout *horizontalLayout_2;
     QHBoxLayout *horizontalLayout;
     QVBoxLayout *verticalLayout_4;
     QCheckBox *chk_loc_enabled;
     QCheckBox *chk_loc_not;
-    QGridLayout *gridLayout;
-    QLabel *label_2;
+    QGridLayout *locGridLayout;
+    QLabel *lblLong;
     QLineEdit *txtLocLongitude;
-    QLabel *label_3;
+    QLabel *lblLat;
     QLineEdit *txtLocLatitude;
     QPushButton *btn_loc_fill_map;
-    QLabel *label_6;
     QVBoxLayout *verticalLayout_2;
-    QLabel *label;
+    QLabel *lblRange;
     QDial *dial_locSensitivity;
-    QLineEdit *lineEdit_locSensitivity;
+    QLineEdit *txtlocSensitivity;
     QGroupBox *groupBox_2;
     QHBoxLayout *horizontalLayout_5;
     QHBoxLayout *horizontalLayout_4;
@@ -73,7 +72,7 @@ public:
     QCheckBox *chk_time_enabled;
     QCheckBox *chk_time_not;
     QVBoxLayout *verticalLayout_5;
-    QLabel *label_4;
+    QLabel *lblTime;
     QVBoxLayout *verticalLayout_7;
     QTimeEdit *timeEdit;
     QTimeEdit *timeEdit_2;
@@ -83,8 +82,11 @@ public:
     QCheckBox *chk_calendar_enabled;
     QCheckBox *chk_calendar_not;
     QVBoxLayout *verticalLayout_9;
-    QLabel *label_5;
+    QLabel *lblCal;
     QLineEdit *txtCalendarKeywords;
+    QFormLayout *formLayout_2;
+    QLabel *label_7;
+    QLineEdit *txtRuleName;
     QDialogButtonBox *buttonBox_ruleSaveCancel;
 
     void setupUi(QDialog *Rule1)
@@ -99,7 +101,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 729, 511));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 729, 483));
         verticalLayout_12 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
         verticalLayout = new QVBoxLayout();
@@ -111,25 +113,27 @@ public:
         horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
         formLayout = new QFormLayout();
         formLayout->setObjectName(QString::fromUtf8("formLayout"));
-        checkBox = new QCheckBox(groupBox_4);
-        checkBox->setObjectName(QString::fromUtf8("checkBox"));
+        chkRunCommand = new QCheckBox(groupBox_4);
+        chkRunCommand->setObjectName(QString::fromUtf8("chkRunCommand"));
 
-        formLayout->setWidget(0, QFormLayout::LabelRole, checkBox);
+        formLayout->setWidget(0, QFormLayout::LabelRole, chkRunCommand);
 
-        lineEdit = new QLineEdit(groupBox_4);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        txtProgram2Run = new QLineEdit(groupBox_4);
+        txtProgram2Run->setObjectName(QString::fromUtf8("txtProgram2Run"));
+        txtProgram2Run->setEnabled(false);
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, lineEdit);
+        formLayout->setWidget(0, QFormLayout::FieldRole, txtProgram2Run);
 
-        checkBox_2 = new QCheckBox(groupBox_4);
-        checkBox_2->setObjectName(QString::fromUtf8("checkBox_2"));
+        chkSwitchProfile = new QCheckBox(groupBox_4);
+        chkSwitchProfile->setObjectName(QString::fromUtf8("chkSwitchProfile"));
 
-        formLayout->setWidget(1, QFormLayout::LabelRole, checkBox_2);
+        formLayout->setWidget(1, QFormLayout::LabelRole, chkSwitchProfile);
 
-        comboBox = new QComboBox(groupBox_4);
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+        cboProfiles = new QComboBox(groupBox_4);
+        cboProfiles->setObjectName(QString::fromUtf8("cboProfiles"));
+        cboProfiles->setEnabled(false);
 
-        formLayout->setWidget(1, QFormLayout::FieldRole, comboBox);
+        formLayout->setWidget(1, QFormLayout::FieldRole, cboProfiles);
 
 
         horizontalLayout_6->addLayout(formLayout);
@@ -163,62 +167,60 @@ public:
 
         horizontalLayout->addLayout(verticalLayout_4);
 
-        gridLayout = new QGridLayout();
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        label_2 = new QLabel(groupBox);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
+        locGridLayout = new QGridLayout();
+        locGridLayout->setObjectName(QString::fromUtf8("locGridLayout"));
+        lblLong = new QLabel(groupBox);
+        lblLong->setObjectName(QString::fromUtf8("lblLong"));
+        lblLong->setEnabled(false);
 
-        gridLayout->addWidget(label_2, 1, 0, 1, 1);
+        locGridLayout->addWidget(lblLong, 0, 0, 1, 1);
 
         txtLocLongitude = new QLineEdit(groupBox);
         txtLocLongitude->setObjectName(QString::fromUtf8("txtLocLongitude"));
+        txtLocLongitude->setEnabled(false);
+        txtLocLongitude->setMaxLength(12);
 
-        gridLayout->addWidget(txtLocLongitude, 1, 1, 1, 1);
+        locGridLayout->addWidget(txtLocLongitude, 0, 1, 1, 1);
 
-        label_3 = new QLabel(groupBox);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
+        lblLat = new QLabel(groupBox);
+        lblLat->setObjectName(QString::fromUtf8("lblLat"));
+        lblLat->setEnabled(false);
 
-        gridLayout->addWidget(label_3, 2, 0, 1, 1);
+        locGridLayout->addWidget(lblLat, 1, 0, 1, 1);
 
         txtLocLatitude = new QLineEdit(groupBox);
         txtLocLatitude->setObjectName(QString::fromUtf8("txtLocLatitude"));
+        txtLocLatitude->setEnabled(false);
+        txtLocLatitude->setMaxLength(12);
 
-        gridLayout->addWidget(txtLocLatitude, 2, 1, 1, 1);
+        locGridLayout->addWidget(txtLocLatitude, 1, 1, 1, 1);
 
         btn_loc_fill_map = new QPushButton(groupBox);
         btn_loc_fill_map->setObjectName(QString::fromUtf8("btn_loc_fill_map"));
+        btn_loc_fill_map->setEnabled(false);
         QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(btn_loc_fill_map->sizePolicy().hasHeightForWidth());
         btn_loc_fill_map->setSizePolicy(sizePolicy1);
 
-        gridLayout->addWidget(btn_loc_fill_map, 3, 1, 1, 1);
-
-        label_6 = new QLabel(groupBox);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-        label_6->setAlignment(Qt::AlignCenter);
-
-        gridLayout->addWidget(label_6, 0, 1, 1, 1);
+        locGridLayout->addWidget(btn_loc_fill_map, 2, 1, 1, 1);
 
 
-        horizontalLayout->addLayout(gridLayout);
+        horizontalLayout->addLayout(locGridLayout);
 
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        label = new QLabel(groupBox);
-        label->setObjectName(QString::fromUtf8("label"));
-        QSizePolicy sizePolicy2(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
-        label->setSizePolicy(sizePolicy2);
-        label->setAlignment(Qt::AlignCenter);
+        lblRange = new QLabel(groupBox);
+        lblRange->setObjectName(QString::fromUtf8("lblRange"));
+        lblRange->setEnabled(false);
+        lblRange->setAlignment(Qt::AlignCenter);
 
-        verticalLayout_2->addWidget(label);
+        verticalLayout_2->addWidget(lblRange);
 
         dial_locSensitivity = new QDial(groupBox);
         dial_locSensitivity->setObjectName(QString::fromUtf8("dial_locSensitivity"));
+        dial_locSensitivity->setEnabled(false);
         dial_locSensitivity->setMinimum(1);
         dial_locSensitivity->setMaximum(1000);
         dial_locSensitivity->setSliderPosition(100);
@@ -228,12 +230,13 @@ public:
 
         verticalLayout_2->addWidget(dial_locSensitivity);
 
-        lineEdit_locSensitivity = new QLineEdit(groupBox);
-        lineEdit_locSensitivity->setObjectName(QString::fromUtf8("lineEdit_locSensitivity"));
-        lineEdit_locSensitivity->setMaxLength(32767);
-        lineEdit_locSensitivity->setAlignment(Qt::AlignCenter);
+        txtlocSensitivity = new QLineEdit(groupBox);
+        txtlocSensitivity->setObjectName(QString::fromUtf8("txtlocSensitivity"));
+        txtlocSensitivity->setEnabled(false);
+        txtlocSensitivity->setMaxLength(5);
+        txtlocSensitivity->setAlignment(Qt::AlignCenter);
 
-        verticalLayout_2->addWidget(lineEdit_locSensitivity);
+        verticalLayout_2->addWidget(txtlocSensitivity);
 
 
         horizontalLayout->addLayout(verticalLayout_2);
@@ -256,18 +259,18 @@ public:
         verticalLayout_6->setSizeConstraint(QLayout::SetDefaultConstraint);
         chk_time_enabled = new QCheckBox(groupBox_2);
         chk_time_enabled->setObjectName(QString::fromUtf8("chk_time_enabled"));
-        QSizePolicy sizePolicy3(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(chk_time_enabled->sizePolicy().hasHeightForWidth());
-        chk_time_enabled->setSizePolicy(sizePolicy3);
+        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(chk_time_enabled->sizePolicy().hasHeightForWidth());
+        chk_time_enabled->setSizePolicy(sizePolicy2);
 
         verticalLayout_6->addWidget(chk_time_enabled);
 
         chk_time_not = new QCheckBox(groupBox_2);
         chk_time_not->setObjectName(QString::fromUtf8("chk_time_not"));
-        sizePolicy3.setHeightForWidth(chk_time_not->sizePolicy().hasHeightForWidth());
-        chk_time_not->setSizePolicy(sizePolicy3);
+        sizePolicy2.setHeightForWidth(chk_time_not->sizePolicy().hasHeightForWidth());
+        chk_time_not->setSizePolicy(sizePolicy2);
 
         verticalLayout_6->addWidget(chk_time_not);
 
@@ -276,24 +279,30 @@ public:
 
         verticalLayout_5 = new QVBoxLayout();
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        label_4 = new QLabel(groupBox_2);
-        label_4->setObjectName(QString::fromUtf8("label_4"));
-        sizePolicy2.setHeightForWidth(label_4->sizePolicy().hasHeightForWidth());
-        label_4->setSizePolicy(sizePolicy2);
-        label_4->setAlignment(Qt::AlignCenter);
+        lblTime = new QLabel(groupBox_2);
+        lblTime->setObjectName(QString::fromUtf8("lblTime"));
+        lblTime->setEnabled(false);
+        QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(lblTime->sizePolicy().hasHeightForWidth());
+        lblTime->setSizePolicy(sizePolicy3);
+        lblTime->setAlignment(Qt::AlignCenter);
 
-        verticalLayout_5->addWidget(label_4);
+        verticalLayout_5->addWidget(lblTime);
 
         verticalLayout_7 = new QVBoxLayout();
         verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
         verticalLayout_7->setSizeConstraint(QLayout::SetDefaultConstraint);
         timeEdit = new QTimeEdit(groupBox_2);
         timeEdit->setObjectName(QString::fromUtf8("timeEdit"));
+        timeEdit->setEnabled(false);
 
         verticalLayout_7->addWidget(timeEdit);
 
         timeEdit_2 = new QTimeEdit(groupBox_2);
         timeEdit_2->setObjectName(QString::fromUtf8("timeEdit_2"));
+        timeEdit_2->setEnabled(false);
 
         verticalLayout_7->addWidget(timeEdit_2);
 
@@ -318,15 +327,15 @@ public:
         verticalLayout_8->setSizeConstraint(QLayout::SetDefaultConstraint);
         chk_calendar_enabled = new QCheckBox(groupBox_3);
         chk_calendar_enabled->setObjectName(QString::fromUtf8("chk_calendar_enabled"));
-        sizePolicy3.setHeightForWidth(chk_calendar_enabled->sizePolicy().hasHeightForWidth());
-        chk_calendar_enabled->setSizePolicy(sizePolicy3);
+        sizePolicy2.setHeightForWidth(chk_calendar_enabled->sizePolicy().hasHeightForWidth());
+        chk_calendar_enabled->setSizePolicy(sizePolicy2);
 
         verticalLayout_8->addWidget(chk_calendar_enabled);
 
         chk_calendar_not = new QCheckBox(groupBox_3);
         chk_calendar_not->setObjectName(QString::fromUtf8("chk_calendar_not"));
-        sizePolicy3.setHeightForWidth(chk_calendar_not->sizePolicy().hasHeightForWidth());
-        chk_calendar_not->setSizePolicy(sizePolicy3);
+        sizePolicy2.setHeightForWidth(chk_calendar_not->sizePolicy().hasHeightForWidth());
+        chk_calendar_not->setSizePolicy(sizePolicy2);
 
         verticalLayout_8->addWidget(chk_calendar_not);
 
@@ -335,22 +344,24 @@ public:
 
         verticalLayout_9 = new QVBoxLayout();
         verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
-        label_5 = new QLabel(groupBox_3);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setAlignment(Qt::AlignCenter);
-        label_5->setWordWrap(true);
+        lblCal = new QLabel(groupBox_3);
+        lblCal->setObjectName(QString::fromUtf8("lblCal"));
+        lblCal->setEnabled(false);
+        lblCal->setAlignment(Qt::AlignCenter);
+        lblCal->setWordWrap(true);
 
-        verticalLayout_9->addWidget(label_5);
+        verticalLayout_9->addWidget(lblCal);
 
         txtCalendarKeywords = new QLineEdit(groupBox_3);
         txtCalendarKeywords->setObjectName(QString::fromUtf8("txtCalendarKeywords"));
+        txtCalendarKeywords->setEnabled(false);
+        txtCalendarKeywords->setMaxLength(255);
 
         verticalLayout_9->addWidget(txtCalendarKeywords);
 
 
         horizontalLayout_3->addLayout(verticalLayout_9);
 
-        groupBox_2->raise();
 
         verticalLayout->addWidget(groupBox_3);
 
@@ -360,6 +371,22 @@ public:
         scrollArea->setWidget(scrollAreaWidgetContents);
 
         verticalLayout_3->addWidget(scrollArea);
+
+        formLayout_2 = new QFormLayout();
+        formLayout_2->setObjectName(QString::fromUtf8("formLayout_2"));
+        label_7 = new QLabel(Rule1);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+
+        formLayout_2->setWidget(0, QFormLayout::LabelRole, label_7);
+
+        txtRuleName = new QLineEdit(Rule1);
+        txtRuleName->setObjectName(QString::fromUtf8("txtRuleName"));
+        txtRuleName->setMaxLength(20);
+
+        formLayout_2->setWidget(0, QFormLayout::FieldRole, txtRuleName);
+
+
+        verticalLayout_3->addLayout(formLayout_2);
 
         buttonBox_ruleSaveCancel = new QDialogButtonBox(Rule1);
         buttonBox_ruleSaveCancel->setObjectName(QString::fromUtf8("buttonBox_ruleSaveCancel"));
@@ -387,27 +414,27 @@ public:
     {
         Rule1->setWindowTitle(QApplication::translate("Rule1", "Dialog", 0, QApplication::UnicodeUTF8));
         groupBox_4->setTitle(QApplication::translate("Rule1", "Action to take", 0, QApplication::UnicodeUTF8));
-        checkBox->setText(QApplication::translate("Rule1", "Run Program", 0, QApplication::UnicodeUTF8));
-        checkBox_2->setText(QApplication::translate("Rule1", "Switch Profile", 0, QApplication::UnicodeUTF8));
+        chkRunCommand->setText(QApplication::translate("Rule1", "Run Command", 0, QApplication::UnicodeUTF8));
+        chkSwitchProfile->setText(QApplication::translate("Rule1", "Switch Profile", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("Rule1", "Location", 0, QApplication::UnicodeUTF8));
         chk_loc_enabled->setText(QApplication::translate("Rule1", "Enabled", 0, QApplication::UnicodeUTF8));
         chk_loc_not->setText(QApplication::translate("Rule1", "Not", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("Rule1", "Longitude", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("Rule1", "Latitude", 0, QApplication::UnicodeUTF8));
+        lblLong->setText(QApplication::translate("Rule1", "Longitude", 0, QApplication::UnicodeUTF8));
+        lblLat->setText(QApplication::translate("Rule1", "Latitude", 0, QApplication::UnicodeUTF8));
         btn_loc_fill_map->setText(QApplication::translate("Rule1", "Fill\n"
 "From\n"
 "Map", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("Rule1", "Activate when at this location", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("Rule1", "Sensitivity", 0, QApplication::UnicodeUTF8));
-        lineEdit_locSensitivity->setText(QApplication::translate("Rule1", "100m", 0, QApplication::UnicodeUTF8));
+        lblRange->setText(QApplication::translate("Rule1", "Range", 0, QApplication::UnicodeUTF8));
+        txtlocSensitivity->setText(QApplication::translate("Rule1", "100m", 0, QApplication::UnicodeUTF8));
         groupBox_2->setTitle(QApplication::translate("Rule1", "Timing", 0, QApplication::UnicodeUTF8));
         chk_time_enabled->setText(QApplication::translate("Rule1", "Enabled", 0, QApplication::UnicodeUTF8));
         chk_time_not->setText(QApplication::translate("Rule1", "Not", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("Rule1", "Activates between these times", 0, QApplication::UnicodeUTF8));
+        lblTime->setText(QApplication::translate("Rule1", "Between these times", 0, QApplication::UnicodeUTF8));
         groupBox_3->setTitle(QApplication::translate("Rule1", "Calendar", 0, QApplication::UnicodeUTF8));
         chk_calendar_enabled->setText(QApplication::translate("Rule1", "Enabled", 0, QApplication::UnicodeUTF8));
         chk_calendar_not->setText(QApplication::translate("Rule1", "Not", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("Rule1", "Activate when calendar shows you are scheduled for something containing the following word(s)", 0, QApplication::UnicodeUTF8));
+        lblCal->setText(QApplication::translate("Rule1", "Activate when calendar event matches the following word(s)", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("Rule1", "Name:", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

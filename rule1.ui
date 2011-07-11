@@ -43,14 +43,18 @@
             <item>
              <layout class="QFormLayout" name="formLayout">
               <item row="0" column="0">
-               <widget class="QCheckBox" name="chkRunProgram">
+               <widget class="QCheckBox" name="chkRunCommand">
                 <property name="text">
-                 <string>Run Program</string>
+                 <string>Run Command</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QLineEdit" name="lineEdit"/>
+               <widget class="QLineEdit" name="txtProgram2Run">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item row="1" column="0">
                <widget class="QCheckBox" name="chkSwitchProfile">
@@ -60,7 +64,11 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QComboBox" name="comboBox"/>
+               <widget class="QComboBox" name="cboProfiles">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -100,29 +108,52 @@
                </layout>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout">
+               <layout class="QGridLayout" name="locGridLayout">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="lblLong">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Longitude</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="txtLocLongitude"/>
+                 <widget class="QLineEdit" name="txtLocLongitude">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="maxLength">
+                   <number>12</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_3">
+                 <widget class="QLabel" name="lblLat">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Latitude</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="txtLocLatitude"/>
+                 <widget class="QLineEdit" name="txtLocLatitude">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="maxLength">
+                   <number>12</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="btn_loc_fill_map">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -141,7 +172,10 @@ Map</string>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
-                 <widget class="QLabel" name="label">
+                 <widget class="QLabel" name="lblRange">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Range</string>
                   </property>
@@ -152,6 +186,9 @@ Map</string>
                 </item>
                 <item>
                  <widget class="QDial" name="dial_locSensitivity">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="minimum">
                    <number>1</number>
                   </property>
@@ -173,12 +210,15 @@ Map</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_locSensitivity">
+                 <widget class="QLineEdit" name="txtlocSensitivity">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>100m</string>
                   </property>
                   <property name="maxLength">
-                   <number>32767</number>
+                   <number>5</number>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -239,7 +279,10 @@ Map</string>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_5">
                 <item>
-                 <widget class="QLabel" name="label_4">
+                 <widget class="QLabel" name="lblTime">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -260,10 +303,18 @@ Map</string>
                    <enum>QLayout::SetDefaultConstraint</enum>
                   </property>
                   <item>
-                   <widget class="QTimeEdit" name="timeEdit"/>
+                   <widget class="QTimeEdit" name="timeEdit">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
-                   <widget class="QTimeEdit" name="timeEdit_2"/>
+                   <widget class="QTimeEdit" name="timeEdit_2">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -316,7 +367,10 @@ Map</string>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="lblCal">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Activate when calendar event matches the following word(s)</string>
                 </property>
@@ -329,7 +383,14 @@ Map</string>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="txtCalendarKeywords"/>
+               <widget class="QLineEdit" name="txtCalendarKeywords">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maxLength">
+                 <number>255</number>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>

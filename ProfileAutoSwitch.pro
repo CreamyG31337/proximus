@@ -28,14 +28,29 @@ include(deployment.pri)
 qtcAddDeployment()
 
 maemo5 {
-  CONFIG += mobility12
+    CONFIG += mobility12
+    INCLUDEPATH += /usr/include/profiled \
+                 /usr/include/dbus-1.0 \
+                 /usr/lib/dbus-1.0/include \
+                /opt/qtm12/
 } else {
-  CONFIG += mobility
+    simulator {
+    CONFIG += mobility
+    #no idea what to do for this...
+    } else {
+    #harmattan (or symbian). Why can't we just get an environment macro for harmattan? >:(
+    CONFIG += mobility
+    #conflict in some dbus stuff i need from glib-2.0 which is the only way to set active profile in harmattan at this time >:(
+   # CONFIG += no_keywords
+    INCLUDEPATH += /usr/include/glib-2.0 \
+                   /usr/lib/glib-2.0/include
+    }
 }
+
 
 #gps
 MOBILITY += location
-#profiles
+#profiles (read only?? whyyyyyyyy)
 MOBILITY += systeminfo
 #calendar
 #MOBILITY += organizer
@@ -51,6 +66,7 @@ equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
 
 
 QT += xml network svg
+#QT += dbus
 
 OTHER_FILES += \
     qtc_packaging/debian_harmattan/rules \

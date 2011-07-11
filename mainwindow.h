@@ -27,6 +27,7 @@
 #include "rule1.h"
 #include <QTime>
 
+
 QTM_USE_NAMESPACE
 
 namespace Ui {
@@ -87,8 +88,7 @@ public:
     void showExpanded();
     QPointer<QGeoPositionInfoSource> locationDataSource;
 
-
-public slots:
+public Q_SLOTS:
     /**
      * Called when the current position is updated.
      */
@@ -112,11 +112,11 @@ public slots:
     void satellitesInViewUpdated(
             const QList<QGeoSatelliteInfo> &satellites);
 
-private slots:
+private Q_SLOTS:
     /**
-     * Initializes the area monitor.
+     * Initializes one area monitor, returns pointer to it.
      */
-    void initAreaMonitors();
+    QGeoAreaMonitor * initAreaMonitor(QGeoCoordinate location, int radius);
     /**
      * Starts to monitor updates in the number of satellites.
      */
@@ -124,7 +124,7 @@ private slots:
 
     void on_btnNewRule_clicked();
 
-    void rulesListChanged();
+    void rulesStorageChanged();
 
     void on_chkGPS_clicked();
 
@@ -145,7 +145,7 @@ private:
      * changes.
      */
     void startGPS();
-    QStringList rulesList;
+   // QStringList rulesList;
     QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;

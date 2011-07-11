@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'rule1.h'
 **
-** Created: Tue Jun 21 01:50:47 2011
+** Created: Sun Jul 10 23:27:18 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_Rule1[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -33,19 +33,32 @@ static const uint qt_meta_data_Rule1[] = {
  // slots: signature, parameters, type, tag, flags
       13,    7,    6,    6, 0x08,
       54,    6,    6,    6, 0x08,
-      99,    6,    6,    6, 0x08,
-     138,    6,    6,    6, 0x08,
-     177,    6,    6,    6, 0x08,
+      93,    6,    6,    6, 0x08,
+     132,    6,    6,    6, 0x08,
+     171,    6,    6,    6, 0x08,
+     201,    6,    6,    6, 0x08,
+     224,    6,    6,    6, 0x08,
+     251,  246,    6,    6, 0x08,
+     286,  246,    6,    6, 0x08,
+     324,  246,    6,    6, 0x08,
+     361,  246,    6,    6, 0x08,
+     399,  246,    6,    6, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_Rule1[] = {
     "Rule1\0\0value\0on_dial_locSensitivity_valueChanged(int)\0"
-    "on_lineEdit_locSensitivity_editingFinished()\0"
+    "on_txtlocSensitivity_editingFinished()\0"
     "on_buttonBox_ruleSaveCancel_rejected()\0"
     "on_buttonBox_ruleSaveCancel_accepted()\0"
     "on_btn_loc_fill_map_clicked()\0"
+    "updateLatLongFromMap()\0readCurrentSettings()\0"
+    "arg1\0on_chkRunCommand_stateChanged(int)\0"
+    "on_chkSwitchProfile_stateChanged(int)\0"
+    "on_chk_loc_enabled_stateChanged(int)\0"
+    "on_chk_time_enabled_stateChanged(int)\0"
+    "on_chk_calendar_enabled_stateChanged(int)\0"
 };
 
 const QMetaObject Rule1::staticMetaObject = {
@@ -78,13 +91,20 @@ int Rule1::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: on_dial_locSensitivity_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 1: on_lineEdit_locSensitivity_editingFinished(); break;
+        case 1: on_txtlocSensitivity_editingFinished(); break;
         case 2: on_buttonBox_ruleSaveCancel_rejected(); break;
         case 3: on_buttonBox_ruleSaveCancel_accepted(); break;
         case 4: on_btn_loc_fill_map_clicked(); break;
+        case 5: updateLatLongFromMap(); break;
+        case 6: readCurrentSettings(); break;
+        case 7: on_chkRunCommand_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 8: on_chkSwitchProfile_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 9: on_chk_loc_enabled_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 10: on_chk_time_enabled_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: on_chk_calendar_enabled_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 12;
     }
     return _id;
 }

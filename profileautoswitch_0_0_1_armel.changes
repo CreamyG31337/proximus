@@ -15,8 +15,8 @@ Changes:
  .
    * Initial Release.
 Checksums-Sha1: 
- 3db13b80adee2c0d6159d777720fdc2350f35442 450328 profileautoswitch_0.0.1_armel.deb
+ 7ec12a79be63f02c88c37fca42893aba1ec4d78e 57472 profileautoswitch_0.0.1_armel.deb
 Checksums-Sha256: 
- 21bd373d8c89c9e4b72c748efb493b4dc2cf3204ae244275f721fa5b247c5053 450328 profileautoswitch_0.0.1_armel.deb
+ c3cf272e5e0aa12c1f8edde905a00c1b701eaa8418cefeb8e1d17749aeb1f2f2 57472 profileautoswitch_0.0.1_armel.deb
 Files: 
- 4208cdedc57a3949fbd2a72a3e380aa3 450328 user/hidden optional profileautoswitch_0.0.1_armel.deb
+ 06cdcf69e282c9cc1d0e80504e6ade79 57472 user/hidden optional profileautoswitch_0.0.1_armel.deb

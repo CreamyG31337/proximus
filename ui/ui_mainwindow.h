@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue Jun 21 01:50:40 2011
+** Created: Sun Jul 10 17:48:18 2011
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -47,6 +47,7 @@ public:
     QPushButton *btnNewRule;
     QPushButton *btnEdit;
     QPushButton *btnDelete;
+    QPushButton *btnEnable;
     QMenuBar *menuBar;
     QMenu *menuMagic_Profile_Switcher;
 
@@ -109,13 +110,21 @@ public:
 
         btnEdit = new QPushButton(tab_Settings);
         btnEdit->setObjectName(QString::fromUtf8("btnEdit"));
+        btnEdit->setEnabled(false);
 
         verticalLayout_2->addWidget(btnEdit);
 
         btnDelete = new QPushButton(tab_Settings);
         btnDelete->setObjectName(QString::fromUtf8("btnDelete"));
+        btnDelete->setEnabled(false);
 
         verticalLayout_2->addWidget(btnDelete);
+
+        btnEnable = new QPushButton(tab_Settings);
+        btnEnable->setObjectName(QString::fromUtf8("btnEnable"));
+        btnEnable->setEnabled(false);
+
+        verticalLayout_2->addWidget(btnEnable);
 
 
         horizontalLayout_2->addLayout(verticalLayout_2);
@@ -155,6 +164,7 @@ public:
         btnNewRule->setText(QApplication::translate("MainWindow", "New", 0, QApplication::UnicodeUTF8));
         btnEdit->setText(QApplication::translate("MainWindow", "Edit", 0, QApplication::UnicodeUTF8));
         btnDelete->setText(QApplication::translate("MainWindow", "Delete", 0, QApplication::UnicodeUTF8));
+        btnEnable->setText(QApplication::translate("MainWindow", "Enable", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_Settings), QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
         menuMagic_Profile_Switcher->setTitle(QApplication::translate("MainWindow", "Magic Profile Switcher", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

@@ -26,6 +26,7 @@ MapWindow::MapWindow(QPointer<QGeoPositionInfoSource> locationDataSource2, qint1
     connect(mapsWidget, SIGNAL(mapPanned()),
                  this, SLOT(disableTracking()));
     radius = radiusIn;
+    this->setAttribute(Qt::WA_DeleteOnClose);//can't type into other window unless we delete this
 }
 
 MapWindow::~MapWindow()
@@ -103,7 +104,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (panActive) {       
         QPointF delta = event->lastPos() - event->pos();
         pan(delta.x(), delta.y());
-        emit panned();       
+        Q_EMIT panned();
     }
     //update location radius circle
     event->accept();
@@ -274,7 +275,7 @@ class MarkerPrivate
  {
      if (d->name != name) {
          d->name = name;
-         emit nameChanged(d->name);
+         Q_EMIT nameChanged(d->name);
      }
  }
  class MarkerManagerPrivate

@@ -13,17 +13,17 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), subscriber(new QValueSpaceSubscriber("/apps/Maemo/ProfileAutoSwitch"))
-    , publisher(new QValueSpacePublisher(QValueSpace::WritableLayer,"/apps/Maemo/ProfileAutoSwitch"))
+    : QMainWindow(parent), ui(new Ui::MainWindow), subscriber(new QValueSpaceSubscriber("/apps/Maemo/Proximus"))
+    , publisher(new QValueSpacePublisher(QValueSpace::WritableLayer,"/apps/Maemo/Proximus"))
 {
     ui->setupUi(this);
     // Start the GPS
     startGPS();
     //ptr to dialog
     Ruledialog = 0;    
-    //fill current rules list,settings from "/apps/Maemo/ProfileAutoSwitch/";
+    //fill current rules list,settings from "/apps/Maemo/Proximus/";
 
-    if (!subscriber->value().isValid()) //need to create /apps/Maemo/ProfileAutoSwitch/
+    if (!subscriber->value().isValid()) //need to create /apps/Maemo/Proximus/
     {
         if (publisher->isConnected())
         {   //set default options
@@ -34,18 +34,25 @@ MainWindow::MainWindow(QWidget *parent)
             //critical error - unable to write to gconf
         }
     }
-    subscriber->cd("/apps/Maemo/ProfileAutoSwitch/settings/GPS");
-    ui->chkGPS->setChecked(subscriber->value().Bool);
+    ui->chkGPS->setChecked(subscriber->value("settings/GPS").Bool);
 
-    subscriber->cd("/apps/Maemo/ProfileAutoSwitch/rules");
-    if (!subscriber->value().isValid()) //need to create /apps/Maemo/ProfileAutoSwitch/rules
+    subscriber->cd("rules");
+    if (!subscriber->value().isValid()) //need to create /apps/Maemo/Proximus/rules
     {
-        //set default rule
-        publisher->setValue("rules/example rule",false);
+        //set default rule, disable it
+        publisher->setValue("rules/Example Rule/deleted",(bool)false);//for some reason setting the value of a node that contains subkeys doesn't work properly
+        publisher->setValue("rules/Example Rule/enabled",(bool)false);//so i have to program it this stupid way instead.
+        publisher->setValue("rules/Example Rule/Location/enabled",(bool)true);
+        publisher->setValue("rules/Example Rule/Location/NOT",(bool)false);
+        publisher->setValue("rules/Example Rule/Location/RADIUS",(double)250);
+        publisher->setValue("rules/Example Rule/Location/LONGITUDE",(double)-113.485336);
+        publisher->setValue("rules/Example Rule/Location/LATITUDE",(double)53.533064);
+
+        publisher->sync();
     }
     //update rules list if anything changes
-    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesListChanged()));   
-    rulesListChanged();//call once now to populate initial rules
+    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesStorageChanged()));
+    rulesStorageChanged();//call once now to populate initial rules
 }
 
 MainWindow::~MainWindow()
@@ -110,7 +117,7 @@ void MainWindow::showExpanded()
 #endif
 }
 
-void MainWindow::rulesListChanged() {
+void MainWindow::rulesStorageChanged() {
     //setup memory structure used to keep track of rules being active or not
     //also recreate qstringlist obj on screen
     //as this DOES NOT happen often, it's okay to recreate from scratch
@@ -118,29 +125,41 @@ void MainWindow::rulesListChanged() {
     ui->listWidgetRules->clear();
 
     //fill list
-    foreach(const QString &str, subscriber->subPaths()){//for each rule
-        ui->listWidgetRules->addItem(str);//add name to screen list
-        //need some objects
-        DataLocation ruleDataLoc;
-        DataTime ruleDataTime;
-        DataCalendar ruleDataCal;
-        //fill them -- TODO: need to check if the paths exist, default them
-        ruleDataLoc.active = false;//we can default the status to false, it will be re-evaluated within a minute
-        ruleDataLoc.enabled = subscriber->value(str + "/Location").toBool();
-        ruleDataLoc.radius = subscriber->value(str + "/Location/RADIUS").toInt();
-        ruleDataLoc.location.setLongitude(subscriber->value(str + "/Location/LONGITUDE").toDouble());
-        ruleDataLoc.location.setLatitude(subscriber->value(str + "/Location/LATITUDE").toDouble());
+    //foreach
+            Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
+        //TODO: file bug and replace this retarded line of code with a simple "isValid" check. not holding my breath.
+        if (!subscriber->value(strRuleName + "/deleted",true).toBool() == true)//if 'not deleted' (reset values is NOT working as it should, buggy??)
+        {
+            ui->listWidgetRules->addItem(strRuleName);//add name to screen list
+            if (subscriber->value(strRuleName + "/enabled").toBool() == true)//if enabled
+                ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::green);
+                //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::green);
+            else
+                ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::red);
+                //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::red);
+            //need some objects
+            DataLocation ruleDataLoc;
+            DataTime ruleDataTime;
+            DataCalendar ruleDataCal;
+            //fill them -- TODO: need to check if the paths exist, default them
+            ruleDataLoc.active = false;//we can default the status to false, it will be re-evaluated within a minute
+            ruleDataLoc.enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
+            ruleDataLoc.radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
+            ruleDataLoc.location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
+            ruleDataLoc.location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
+            if (ruleDataLoc.enabled)
+            {
 
-        ruleDataTime.active = false;
-        ruleDataTime.enabled = subscriber->value(str + "/Location").toBool();
-        ruleDataTime.time1 = subscriber->value(str + "/Location/RADIUS").toTime();
-        ruleDataTime.time2 = subscriber->value(str + "/Location/RADIUS").toTime();
+            }
 
-        //ruleDataCal
+            ruleDataTime.active = false;
+            ruleDataTime.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
+            ruleDataTime.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
+            ruleDataTime.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
 
+            //ruleDataCal
+        }
     }
-
-
 }
 
 void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
@@ -148,7 +167,7 @@ void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
     if (geoPositionInfo.isValid())
     {
         //gps never stops
-        locationDataSource->setUpdateInterval(30000);//30 sec
+        locationDataSource->setUpdateInterval(30000);//30 sec //TODO: for meego we should sync this to WAKEUP_SLOT_30_SEC in MeeGo::QmHeartbeat
         // Get the current location as latitude and longitude
         QGeoCoordinate geoCoordinate = geoPositionInfo.coordinate();
         qreal latitude = geoCoordinate.latitude();
@@ -186,22 +205,24 @@ void MainWindow::startGPS()
     }
 }
 
-//loop through rules and set up area monitors tied to signals for each one. add all to a QHash.
-void MainWindow::initAreaMonitors()
+//create and return a (pointer to) a single QGeoAreaMonitor
+QGeoAreaMonitor * MainWindow::initAreaMonitor(QGeoCoordinate location, int radius)
 {
     // Create the area monitor
     QGeoAreaMonitor *monitor =
             QGeoAreaMonitor::createDefaultMonitor(this);
 
     // Connect the area monitoring signals to the corresponding slots
+    //add rule name too
     connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
             this, SLOT(areaEntered(QGeoPositionInfo)));
     connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
             this, SLOT(areaExited(QGeoPositionInfo)));
 
-    QGeoCoordinate location(66.49154, 25.772982);
+    //QGeoCoordinate location(66.49154, 25.772982);
     monitor->setCenter(location);
-    monitor->setRadius(100);
+    monitor->setRadius(radius);
+    return monitor;
 }
 
 void MainWindow::areaEntered(const QGeoPositionInfo &update) {
@@ -260,7 +281,8 @@ void MainWindow::satellitesInViewUpdated(
 
 void MainWindow::on_btnNewRule_clicked()
 {
-    qint8 intRuleToEdit = rulesList.count() + 1;
+
+    qint8 intRuleToEdit =  ui->listWidgetRules->count() + 1;
     if (Ruledialog == 0)
     {
         Ruledialog =  new Rule1(topLevelWidget(),"Rule " +  QString::number(intRuleToEdit),locationDataSource);
@@ -291,7 +313,7 @@ void MainWindow::on_chkGPS_clicked()
 
 void MainWindow::on_btnEdit_clicked()
 {
-    if (!ui->listWidgetRules->currentItem()) return;//no item selected; could show messagebox
+    if (!ui->listWidgetRules->currentItem()) return;//no item selected; could show messagebox, if even possible to end up in this situation
     if (Ruledialog == 0)
     {
         Ruledialog =  new Rule1(window(), ui->listWidgetRules->currentItem()->text(),locationDataSource);
@@ -307,9 +329,18 @@ void MainWindow::on_btnEdit_clicked()
 
 void MainWindow::on_btnDelete_clicked()
 {
-    if (!ui->listWidgetRules->currentItem()) return;//no item selected; could show messagebox
-    //show warning messagebox now
-    publisher->resetValue("rules/" + ui->listWidgetRules->currentItem()->text());
+    if (!ui->listWidgetRules->currentItem()) return;//no item selected; could show messagebox, if even possible to end up in this situation
+    int ret = (QMessageBox::question(this,
+                             "Please confirm",
+                             "Do you wish to delete rule: '"+ ui->listWidgetRules->currentItem()->text()+"'",
+                             QMessageBox::Yes | QMessageBox::No,
+                             QMessageBox::No)
+              );
+    if (ret == QMessageBox::Yes){//hi, i'm nokia and i can't make a resetValue function that works properly. this will NOT delete the root node for some stupid reason. more hours of my life gone.
+        publisher->resetValue("rules/" + ui->listWidgetRules->currentItem()->text());//yeah so it doesn't seem to be doing ANYTHING right now.
+        publisher->setValue("rules/" + ui->listWidgetRules->currentItem()->text() + "/deleted",true);//i guess i will write stupid code then.
+    }
+    publisher->sync();
 }
 
 void MainWindow::on_listWidgetRules_currentTextChanged(const QString &currentText)
@@ -326,29 +357,28 @@ void MainWindow::on_listWidgetRules_currentTextChanged(const QString &currentTex
         ui->btnDelete->setEnabled(true);
         ui->btnEnable->setEnabled(true);
         ui->btnEdit->setEnabled(true);
-    }
-    subscriber->cd("/apps/Maemo/ProfileAutoSwitch/rules/" + currentText);
-    if (subscriber->value().Bool)//enabled
+    }   
+    if (subscriber->value(currentText + "/enabled").toBool())//enabled
         ui->btnEnable->setText("Disable");
     else//disabled
         ui->btnEnable->setText("Enable");
-    //reconnect this thing now
-    subscriber->cd("/apps/Maemo/ProfileAutoSwitch/rules");
-    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesListChanged()));
 }
 
 void MainWindow::on_btnEnable_clicked()
 {
 
+    QString curr = ui->listWidgetRules->currentItem()->text();
+
     if ( ui->btnEnable->text() == "Enable")
     {
-        publisher->setValue("rules/" + ui->listWidgetRules->currentItem()->text(),true);
+        publisher->setValue("rules/" + curr + "/enabled",true);
+        ui->listWidgetRules->currentItem()->setForeground(Qt::green);
         ui->btnEnable->setText("Disable");
     }
     else
     {
-        publisher->setValue("rules/" + ui->listWidgetRules->currentItem()->text(),false);
+        publisher->setValue("rules/" + curr + "/enabled",false);
+        ui->listWidgetRules->currentItem()->setForeground(Qt::red);
         ui->btnEnable->setText("Enable");
     }
-
 }

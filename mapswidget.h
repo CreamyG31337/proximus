@@ -45,7 +45,7 @@ private:
     MarkerManager *markerManager;
     bool tracking;
 
-private slots:
+private Q_SLOTS:
     // slot to receive updates
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
@@ -64,7 +64,7 @@ public:
     void setCenterLatitude(double lat);
     double centerLongitude() const;
     void setCenterLongitude(double lon);
-signals:
+Q_SIGNALS:
     void panned();
 
 private:
@@ -105,9 +105,9 @@ public:
     QGeoMapCircleObject *sensitivityCircle;
     QGeoCoordinate *mapCenterCoord;
     void drawSensitivityCircle(qint16 radius);
-signals:
+Q_SIGNALS:
     void mapPanned();
-public slots:
+public Q_SLOTS:
     void initialize(QGeoMappingManager *manager);
 private:
     MapsWidgetPrivate *d;
@@ -133,12 +133,12 @@ class Marker : public QGeoMapPixmapObject
      MarkerType markerType() const;
      void setMarkerType(MarkerType type);
      QString name() const;
-public slots:
+public Q_SLOTS:
     void setName(QString name);
 
 private:
      MarkerPrivate *d;
-signals:
+Q_SIGNALS:
     void markerTypeChanged(const MarkerType &type);
     void nameChanged(const QString &name);
 
@@ -154,21 +154,21 @@ public:
 
     QGeoCoordinate myLocation() const;
 
-public slots:
+public Q_SLOTS:
     void setMap(QGraphicsGeoMap *map);
     //void setStatusBar(StatusBarItem *bar);
     void setMyLocation(QGeoCoordinate coord);
    // void search(QString query, qreal radius=-1);
   //  void removeSearchMarkers();
 
-signals:
+Q_SIGNALS:
    // void searchError(QGeoSearchReply::Error error, QString errorString);
   //  void searchFinished();
 
 private:
     MarkerManagerPrivate *d;
 
-private slots:
+private Q_SLOTS:
   //  void replyFinished(QGeoSearchReply *reply);
     void myLocationChanged(QGeoCoordinate location);
     //void reverseReplyFinished(QGeoSearchReply *reply);

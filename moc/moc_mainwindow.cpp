@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Tue Jun 21 01:50:46 2011
+** Created: Sun Jul 10 23:27:16 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      14,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -37,8 +37,14 @@ static const uint qt_meta_data_MainWindow[] = {
      139,  128,   11,   11, 0x0a,
      188,  128,   11,   11, 0x0a,
      238,   11,   11,   11, 0x08,
-     256,   11,   11,   11, 0x08,
-     280,   11,   11,   11, 0x08,
+     257,   11,   11,   11, 0x08,
+     281,   11,   11,   11, 0x08,
+     305,   11,   11,   11, 0x08,
+     327,   11,   11,   11, 0x08,
+     347,   11,   11,   11, 0x08,
+     368,   11,   11,   11, 0x08,
+     403,  391,   11,   11, 0x08,
+     450,   11,   11,   11, 0x08,
 
        0        // eod
 };
@@ -50,8 +56,12 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "areaExited(QGeoPositionInfo)\0satellites\0"
     "satellitesInUseUpdated(QList<QGeoSatelliteInfo>)\0"
     "satellitesInViewUpdated(QList<QGeoSatelliteInfo>)\0"
-    "initAreaMonitor()\0startSatelliteMonitor()\0"
-    "on_btnNewRule_clicked()\0"
+    "initAreaMonitors()\0startSatelliteMonitor()\0"
+    "on_btnNewRule_clicked()\0rulesStorageChanged()\0"
+    "on_chkGPS_clicked()\0on_btnEdit_clicked()\0"
+    "on_btnDelete_clicked()\0currentText\0"
+    "on_listWidgetRules_currentTextChanged(QString)\0"
+    "on_btnEnable_clicked()\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -88,12 +98,18 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 2: areaExited((*reinterpret_cast< const QGeoPositionInfo(*)>(_a[1]))); break;
         case 3: satellitesInUseUpdated((*reinterpret_cast< const QList<QGeoSatelliteInfo>(*)>(_a[1]))); break;
         case 4: satellitesInViewUpdated((*reinterpret_cast< const QList<QGeoSatelliteInfo>(*)>(_a[1]))); break;
-        case 5: initAreaMonitor(); break;
+        case 5: initAreaMonitors(); break;
         case 6: startSatelliteMonitor(); break;
         case 7: on_btnNewRule_clicked(); break;
+        case 8: rulesStorageChanged(); break;
+        case 9: on_chkGPS_clicked(); break;
+        case 10: on_btnEdit_clicked(); break;
+        case 11: on_btnDelete_clicked(); break;
+        case 12: on_listWidgetRules_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 13: on_btnEnable_clicked(); break;
         default: ;
         }
-        _id -= 8;
+        _id -= 14;
     }
     return _id;
 }
