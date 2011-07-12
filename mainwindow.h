@@ -34,12 +34,17 @@ namespace Ui {
     class MainWindow;
 }
 
-struct DataLocation
+class DataLocation : public QObject
 {
+    Q_OBJECT
+public:
     bool enabled;
     bool active;//active means the conditions are all true
     QGeoCoordinate location;
     qint16 radius;
+    QGeoAreaMonitor *areaMon;
+public Q_SLOTS:
+    void areaEntered(const QGeoPositionInfo &update);
 };
 struct DataTime
 {
@@ -96,7 +101,7 @@ public Q_SLOTS:
     /**
      * Called when the current position is in range of the area.
      */
-    void areaEntered(const QGeoPositionInfo &update);
+   // void areaEntered(const QGeoPositionInfo &update);
     /**
      * Called when the current position moves out of range of the area.
      */
@@ -116,7 +121,7 @@ private Q_SLOTS:
     /**
      * Initializes one area monitor, returns pointer to it.
      */
-    QGeoAreaMonitor * initAreaMonitor(QGeoCoordinate location, int radius);
+    QGeoAreaMonitor * initAreaMonitor(DataLocation *& Dataloc);
     /**
      * Starts to monitor updates in the number of satellites.
      */
@@ -149,7 +154,7 @@ private:
     QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;
-    QHash<QString, Rule> Rules;
+    QHash<QString, Rule *> Rules;
 };
 
 

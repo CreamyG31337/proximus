@@ -138,18 +138,19 @@ void MainWindow::rulesStorageChanged() {
                 ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::red);
                 //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::red);
             //need some objects
-            DataLocation ruleDataLoc;
+           // DataLocation ruleDataLoc;
+            DataLocation* ptrRuleDataLoc = new DataLocation;//this one needs to be ptr because it's a qobject
             DataTime ruleDataTime;
             DataCalendar ruleDataCal;
             //fill them -- TODO: need to check if the paths exist, default them
-            ruleDataLoc.active = false;//we can default the status to false, it will be re-evaluated within a minute
-            ruleDataLoc.enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
-            ruleDataLoc.radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
-            ruleDataLoc.location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
-            ruleDataLoc.location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
-            if (ruleDataLoc.enabled)
+            ptrRuleDataLoc->active = false;//we can default the status to false, it will be re-evaluated within a minute
+            ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
+            ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
+            ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
+            ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
+            if (ptrRuleDataLoc->enabled)
             {
-
+                ptrRuleDataLoc->areaMon = initAreaMonitor(ptrRuleDataLoc);
             }
 
             ruleDataTime.active = false;
@@ -157,7 +158,10 @@ void MainWindow::rulesStorageChanged() {
             ruleDataTime.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
             ruleDataTime.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
 
-            //ruleDataCal
+            ruleDataCal.active = false;
+            ruleDataCal.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
+            ruleDataCal.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
+
         }
     }
 }
@@ -206,31 +210,29 @@ void MainWindow::startGPS()
 }
 
 //create and return a (pointer to) a single QGeoAreaMonitor
-QGeoAreaMonitor * MainWindow::initAreaMonitor(QGeoCoordinate location, int radius)
+QGeoAreaMonitor * MainWindow::initAreaMonitor(DataLocation *& Dataloc)
 {
     // Create the area monitor
-    QGeoAreaMonitor *monitor =
-            QGeoAreaMonitor::createDefaultMonitor(this);
+    QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor(this);
 
     // Connect the area monitoring signals to the corresponding slots
-    //add rule name too
     connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
-            this, SLOT(areaEntered(QGeoPositionInfo)));
+            Dataloc, SLOT(areaEntered(QGeoPositionInfo)));
     connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
             this, SLOT(areaExited(QGeoPositionInfo)));
-
-    //QGeoCoordinate location(66.49154, 25.772982);
-    monitor->setCenter(location);
-    monitor->setRadius(radius);
+    monitor->setCenter(Dataloc->location);
+    monitor->setRadius(Dataloc->radius);
     return monitor;
 }
 
-void MainWindow::areaEntered(const QGeoPositionInfo &update) {
+void DataLocation::areaEntered(const QGeoPositionInfo &update) {
     // The area has been entered
+    QMessageBox::information(NULL,"test","entered area",QMessageBox::Ok);
 }
 
 void MainWindow::areaExited(const QGeoPositionInfo &update) {
     // The area has been exited
+     QMessageBox::information(this,"test","exited area",QMessageBox::Ok);
 }
 
 void MainWindow::startSatelliteMonitor()
