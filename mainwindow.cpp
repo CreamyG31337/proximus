@@ -145,6 +145,7 @@ void MainWindow::rulesStorageChanged() {
             //fill them -- TODO: need to check if the paths exist, default them
             ptrRuleDataLoc->active = false;//we can default the status to false, it will be re-evaluated within a minute
             ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
+            ptrRuleDataLoc->inverseCond = subscriber->value(strRuleName + "/Location/NOT").toBool();
             ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
             ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
             ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
@@ -155,11 +156,13 @@ void MainWindow::rulesStorageChanged() {
 
             ruleDataTime.active = false;
             ruleDataTime.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
+            ruleDataTime.inverseCond = subscriber->value(strRuleName + "/Time/NOT").toBool();
             ruleDataTime.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
             ruleDataTime.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
 
             ruleDataCal.active = false;
             ruleDataCal.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
+            ruleDataCal.inverseCond = subscriber->value(strRuleName + "/Calendar/NOT").toBool();
             ruleDataCal.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
 
         }
@@ -219,7 +222,7 @@ QGeoAreaMonitor * MainWindow::initAreaMonitor(DataLocation *& Dataloc)
     connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
             Dataloc, SLOT(areaEntered(QGeoPositionInfo)));
     connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
-            this, SLOT(areaExited(QGeoPositionInfo)));
+            Dataloc, SLOT(areaExited(QGeoPositionInfo)));
     monitor->setCenter(Dataloc->location);
     monitor->setRadius(Dataloc->radius);
     return monitor;
@@ -227,12 +230,20 @@ QGeoAreaMonitor * MainWindow::initAreaMonitor(DataLocation *& Dataloc)
 
 void DataLocation::areaEntered(const QGeoPositionInfo &update) {
     // The area has been entered
-    QMessageBox::information(NULL,"test","entered area",QMessageBox::Ok);
+    QMessageBox::information(NULL,"debug","entered area",QMessageBox::Ok);
+    if (this->inverseCond == false)
+        this->active = true;
+    else
+        this->active = false;
 }
 
-void MainWindow::areaExited(const QGeoPositionInfo &update) {
+void DataLocation::areaExited(const QGeoPositionInfo &update) {
     // The area has been exited
-     QMessageBox::information(this,"test","exited area",QMessageBox::Ok);
+     QMessageBox::information(NULL,"debug","exited area",QMessageBox::Ok);
+     if (this->inverseCond == false)
+         this->active = false;
+     else
+         this->active = true;
 }
 
 void MainWindow::startSatelliteMonitor()

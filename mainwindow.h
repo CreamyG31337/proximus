@@ -39,16 +39,25 @@ class DataLocation : public QObject
     Q_OBJECT
 public:
     bool enabled;
+    bool inverseCond;
     bool active;//active means the conditions are all true
     QGeoCoordinate location;
     qint16 radius;
     QGeoAreaMonitor *areaMon;
 public Q_SLOTS:
+    /**
+     * Called when the current position is in range of the area.
+     */
     void areaEntered(const QGeoPositionInfo &update);
+    /**
+     * Called when the current position moves out of range of the area.
+     */
+    void areaExited(const QGeoPositionInfo &update);
 };
 struct DataTime
 {
     bool enabled;
+    bool inverseCond;
     bool active;
     QTime time1;
     QTime time2;
@@ -57,6 +66,7 @@ struct DataTime
 struct DataCalendar
 {
     bool enabled;
+    bool inverseCond;
     bool active;
     QString keywords;
 };
@@ -98,14 +108,6 @@ public Q_SLOTS:
      * Called when the current position is updated.
      */
     void positionUpdated(QGeoPositionInfo geoPositionInfo);
-    /**
-     * Called when the current position is in range of the area.
-     */
-   // void areaEntered(const QGeoPositionInfo &update);
-    /**
-     * Called when the current position moves out of range of the area.
-     */
-    void areaExited(const QGeoPositionInfo &update);
     /**
      * Called when the number of satellites in use is updated.
      */
@@ -154,7 +156,7 @@ private:
     QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;
-    QHash<QString, Rule *> Rules;
+    QHash<QString, Rule*> Rules;
 };
 
 
