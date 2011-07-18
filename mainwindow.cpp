@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
             //critical error - unable to write to gconf
         }
     }
-    ui->chkGPS->setChecked(subscriber->value("settings/GPS").Bool);
+    ui->chkGPSMode->setChecked(subscriber->value("settings/GPS").Bool);
 
     subscriber->cd("rules");
     if (!subscriber->value().isValid()) //need to create /apps/Maemo/Proximus/rules
@@ -125,7 +125,6 @@ void MainWindow::rulesStorageChanged() {
     ui->listWidgetRules->clear();
 
     //fill list
-    //foreach
             Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
         //TODO: file bug and replace this retarded line of code with a simple "isValid" check. not holding my breath.
         if (!subscriber->value(strRuleName + "/deleted",true).toBool() == true)//if 'not deleted' (reset values is NOT working as it should, buggy??)
@@ -169,6 +168,69 @@ void MainWindow::rulesStorageChanged() {
     }
 }
 
+//triggered by a heartbeat timer object every 45 min or so,
+//checks calendar for any keyword matches and sets more timers to change the rule to active when those become current.
+//if this api made any sense, i could use signals too
+void MainWindow::updateCalendar()
+{
+    QOrganizerManager defaultManager; //provides access to system address book, calendar
+    //get list of all upcoming calendar events
+    QList<QOrganizerItem> entries =
+             defaultManager.items(QDateTime::currentDateTime(),//not sure if this returns events already started
+                                  QDateTime::currentDateTime().addSecs(3600));
+    //for each calendar rule
+    Q_FOREACH(Rule* ruleStruct,  Rules) {
+        bool foundMatch = false;
+        QString keywords = ruleStruct->data.calendarRule.keywords;
+        //seperate keywords string into list of keywords
+        QStringList keywordList = keywords.split(" ");
+        //then loop through all the upcoming calendar events
+        Q_FOREACH(QOrganizerItem orgItem, entries){
+            //and each individual keyword
+            Q_FOREACH(QString keyword, keywordList){
+                if (orgItem.description().contains(keyword)) {
+                    //keyword match, set up timer to activate this rule
+                    foundMatch = true;
+                    QTimer *activateTimer = new QTimer(this);
+                    QTimer *deactivateTimer = new QTimer(this);
+                    connect(activateTimer, SIGNAL(timeout()), this, SLOT(activateCalendarRule(ruleStruct)));
+                    connect(deactivateTimer, SIGNAL(timeout()), this, SLOT(deactivateCalendarRule(ruleStruct)));
+                    //find seconds until event
+                    qint16 startTimeDiff, endTimeDiff;
+                    QOrganizerEventTime eventTime = orgItem.detail<QOrganizerEventTime>();
+                    startTimeDiff = QDateTime::currentDateTime().secsTo(eventTime.startDateTime());
+                    endTimeDiff = QDateTime::currentDateTime().secsTo(eventTime.endDateTime());
+                    activateTimer->start(startTimeDiff * 1000);//timer is in ms
+                    deactivateTimer->start(endTimeDiff * 1000);//these could be negative if all day event?
+                }
+                //if keywords not found but rule is inversed, we still need to set to active (now)
+                if (foundMatch == false && ruleStruct->data.calendarRule.inverseCond == true)
+                {
+                     ruleStruct->data.calendarRule.active = true;
+                }
+            }
+        }
+    }
+}
+
+//sets rule to active
+void MainWindow::activateCalendarRule(Rule* ruleStruct)
+{
+    if (ruleStruct->data.calendarRule.inverseCond == false)
+        ruleStruct->data.calendarRule.active = true;
+    else
+        ruleStruct->data.calendarRule.active = false;
+}
+
+//sets rule to inactive
+void MainWindow::deactivateCalendarRule(Rule* ruleStruct)
+{
+    if (ruleStruct->data.calendarRule.inverseCond == false)
+        ruleStruct->data.calendarRule.active = false;
+    else
+        ruleStruct->data.calendarRule.active = true;
+}
+
 void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
 {
     if (geoPositionInfo.isValid())
@@ -200,8 +262,11 @@ void MainWindow::startGPS()
                              SLOT(positionUpdated(QGeoPositionInfo)));
             // Start listening for position updates
             locationDataSource->startUpdates();
+            if (ui->chkGPSMode->isChecked())
+                locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+            else
+                locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
 
-            locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
         } else {
             // Not able to obtain the location data source
             // TODO: Error handling
@@ -309,11 +374,11 @@ void MainWindow::on_btnNewRule_clicked()
     #endif
 }
 
-void MainWindow::on_chkGPS_clicked()
+void MainWindow::on_chkGPSMode_clicked()
 {
     if (publisher->isConnected())
     {
-        publisher->setValue("settings/GPS",ui->chkGPS->isChecked());
+        publisher->setValue("settings/GPS",ui->chkGPSMode->isChecked());
         //todo: restart gps
 
     }

@@ -53,7 +53,7 @@ MOBILITY += location
 #profiles (read only?? whyyyyyyyy)
 MOBILITY += systeminfo
 #calendar
-#MOBILITY += organizer
+MOBILITY += organizer
 #gconf
 MOBILITY += publishsubscribe
 

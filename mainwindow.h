@@ -26,6 +26,11 @@
 #include <QValueSpacePublisher>
 #include "rule1.h"
 #include <QTime>
+#include <QOrganizerManager>
+#include <QOrganizerItem>
+#include <QTimer>
+#include <QOrganizerEventTime>
+#include <QOrganizerItemDetail>
 
 
 QTM_USE_NAMESPACE
@@ -133,7 +138,7 @@ private Q_SLOTS:
 
     void rulesStorageChanged();
 
-    void on_chkGPS_clicked();
+    void on_chkGPSMode_clicked();
 
     void on_btnEdit_clicked();
 
@@ -142,6 +147,11 @@ private Q_SLOTS:
     void on_listWidgetRules_currentTextChanged(const QString &currentText);
 
     void on_btnEnable_clicked();
+
+    void updateCalendar();
+
+    void activateCalendarRule(Rule* ruleStruct);
+    void deactivateCalendarRule(Rule* ruleStruct);
 
 private:
     Ui::MainWindow *ui;
