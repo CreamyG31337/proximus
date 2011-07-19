@@ -32,7 +32,7 @@ maemo5 {
     INCLUDEPATH += /usr/include/profiled \
                  /usr/include/dbus-1.0 \
                  /usr/lib/dbus-1.0/include \
-                /opt/qtm12/    
+                 /opt/qtm12/
 } else {
     simulator {
     CONFIG += mobility
@@ -50,7 +50,7 @@ maemo5 {
 
 #gps
 MOBILITY += location
-#profiles (read only?? whyyyyyyyy)
+#profiles (read only?? whyyyyyyyy); SystemAlignedTimer
 MOBILITY += systeminfo
 #calendar
 MOBILITY += organizer

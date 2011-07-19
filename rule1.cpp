@@ -6,7 +6,7 @@
 #include <QValueSpace>
 #include <QValueSpacePublisher>
 #include <QValueSpaceSubscriber>
-//#include <QSystemDeviceInfo> //currently useless
+//#include <QSystemDeviceInfo> //currently useless since can't switch profiles only read them
 
 Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource> locationDataSource) :
     QDialog(parent),

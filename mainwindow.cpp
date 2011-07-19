@@ -275,6 +275,20 @@ void MainWindow::startGPS()
         // Start listening for position updates
         locationDataSource->startUpdates();
     }
+    //set up timer for calendar,
+    #if defined(Q_WS_MAEMO_5)
+        //??
+    #else
+        #if defined (Q_WS_SIMULATOR)
+            //??
+        #else //harmattan or symbian...
+            QSystemAlignedTimer *newTimer = new QSystemAlignedTimer(this);
+            connect (newTimer, SIGNAL(timeout()),this,SLOT(updateCalendar()));
+            newTimer->start(60*45,60*60);
+        #endif
+    #endif
+
+
 }
 
 //create and return a (pointer to) a single QGeoAreaMonitor

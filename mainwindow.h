@@ -31,6 +31,17 @@
 #include <QTimer>
 #include <QOrganizerEventTime>
 #include <QOrganizerItemDetail>
+#if defined(Q_WS_MAEMO_5)
+    //dunno
+#else
+    #if defined (Q_WS_SIMULATOR)
+        //i dunno what to do in this case.
+    #else //harmattan or symbian...
+        #include <QSystemAlignedTimer>
+    #endif
+#endif
+
+
 
 
 QTM_USE_NAMESPACE
@@ -162,7 +173,6 @@ private:
      * changes.
      */
     void startGPS();
-   // QStringList rulesList;
     QPointer<Rule1> Ruledialog;
     QValueSpaceSubscriber *subscriber;
     QValueSpacePublisher *publisher;
