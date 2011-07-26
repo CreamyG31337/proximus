@@ -16,7 +16,7 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
+	# qmake PREFIX=/usr# Uncomment this line for use without Qt Creator
 
 	touch configure-stamp
 
@@ -27,7 +27,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
+	# $(MAKE) # Uncomment this line for use without Qt Creator
 	#docbook-to-man debian/profileautoswitch.sgml > profileautoswitch.1
 
 	touch $@
@@ -50,8 +50,10 @@ install: build
 
 	# Add here commands to install the package into debian/profileautoswitch.
 	$(MAKE) INSTALL_ROOT="$(CURDIR)"/debian/profileautoswitch install
-	sed 's:Exec=.*:Exec=/opt/usr/bin/ProfileAutoSwitch:' /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/hildon/ProfileAutoSwitch.desktop > /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/hildon/ProfileAutoSwitch.desktop.sed || echo -n
-	mv /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/hildon/ProfileAutoSwitch.desktop.sed /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/hildon/ProfileAutoSwitch.desktop || echo -n
+	sed 's:^Icon=.*:Icon=/usr/share/icons/hicolor/64x64/apps/ProfileAutoSwitch.png:' /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop > /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed || echo -n
+	mv /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop || echo -n
+	sed 's:Exec=.*:Exec=/usr/local/bin/ProfileAutoSwitch:' /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop > /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed || echo -n
+	mv /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop || echo -n
 
 
 # Build architecture-independent files here.
@@ -78,13 +80,13 @@ binary-arch: build install
 #	dh_installinfo
 	dh_installman
 	dh_link
-	# dh_strip
+	dh_strip
 	dh_compress
 	dh_fixperms
 #	dh_perl
 #	dh_makeshlibs
 	dh_installdeb
-	dh_shlibdeps
+	# dh_shlibdeps # Uncomment this line for use without Qt Creator
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb

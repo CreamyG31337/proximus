@@ -1,5 +1,5 @@
-7cecff35cd4bc0dab04513518b951c92  opt/usr/bin/ProfileAutoSwitch
-a42fc39ee1b1784768855487a550ec17  usr/share/applications/hildon/ProfileAutoSwitch.desktop
-574972dbda959e001d00e430e0b99a08  usr/share/doc/profileautoswitch/changelog.gz
-185a9409f252f65eb745fb5e24c7fc81  usr/share/doc/profileautoswitch/copyright
+2d61d871faaee3b54d8bdb06336bfe3b  usr/local/bin/ProfileAutoSwitch
+02cbba470a218e2463f9427307be1c92  usr/share/applications/ProfileAutoSwitch.desktop
+02ea4644ef665811ce21206bd91436a3  usr/share/doc/profileautoswitch/changelog.gz
+7d4382d004eac49f4f2f6e84ef32e310  usr/share/doc/profileautoswitch/copyright
 8c89aced3058ec897cf13c4bcd93f4f1  usr/share/icons/hicolor/64x64/apps/ProfileAutoSwitch.png

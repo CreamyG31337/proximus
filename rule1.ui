@@ -110,26 +110,6 @@
               <item>
                <layout class="QGridLayout" name="locGridLayout">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="lblLong">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Longitude</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="txtLocLongitude">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="maxLength">
-                   <number>12</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
                  <widget class="QLabel" name="lblLat">
                   <property name="enabled">
                    <bool>false</bool>
@@ -139,8 +119,28 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="1">
                  <widget class="QLineEdit" name="txtLocLatitude">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="maxLength">
+                   <number>12</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="lblLong">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Longitude</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="txtLocLongitude">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>

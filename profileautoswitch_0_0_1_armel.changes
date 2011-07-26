@@ -1,5 +1,5 @@
 Format: 1.8
-Date: Tue, 07 Jun 2011 12:52:04 -0600
+Date: Mon, 20 Jun 2011 23:26:36 -0600
 Source: profileautoswitch
 Binary: profileautoswitch
 Architecture: armel
@@ -15,8 +15,9 @@ Changes:
  .
    * Initial Release.
 Checksums-Sha1: 
- 7ec12a79be63f02c88c37fca42893aba1ec4d78e 57472 profileautoswitch_0.0.1_armel.deb
+ 6545124f8cbaf741351354df90ab04ac986f55cf 522746 profileautoswitch_0.0.1_armel.deb
 Checksums-Sha256: 
- c3cf272e5e0aa12c1f8edde905a00c1b701eaa8418cefeb8e1d17749aeb1f2f2 57472 profileautoswitch_0.0.1_armel.deb
+ ff9adf0a6be1ce84afc0462f42c697fb35049468016edab80b2253908db58278 522746 profileautoswitch_0.0.1_armel.deb
 Files: 
- 06cdcf69e282c9cc1d0e80504e6ade79 57472 user/hidden optional profileautoswitch_0.0.1_armel.deb
+ 2d7f5709f73c0147cb125517dd59576b 522746 user/other optional profileautoswitch_0.0.1_armel.deb
+Maemo-Display-Name: ProfileAutoSwitch

@@ -31,6 +31,8 @@
 #include <QTimer>
 #include <QOrganizerEventTime>
 #include <QOrganizerItemDetail>
+#include <QApplication>
+
 #if defined(Q_WS_MAEMO_5)
     //dunno
 #else
@@ -49,11 +51,12 @@ QTM_USE_NAMESPACE
 namespace Ui {
     class MainWindow;
 }
-
+class Rule;
 class DataLocation : public QObject
 {
     Q_OBJECT
 public:
+    explicit DataLocation();//constructor
     bool enabled;
     bool inverseCond;
     bool active;//active means the conditions are all true
@@ -69,6 +72,8 @@ public Q_SLOTS:
      * Called when the current position moves out of range of the area.
      */
     void areaExited(const QGeoPositionInfo &update);
+Q_SIGNALS:
+    void activeChanged(Rule* ruleStruct);
 };
 struct DataTime
 {
@@ -88,13 +93,18 @@ struct DataCalendar
 };
 struct RuleData
 {
-    DataLocation locationRule;
+    //constructor
+    explicit RuleData();
+    DataLocation* locationRule;
     DataTime timeRule;
     DataCalendar calendarRule;
 };
-struct Rule
+class Rule : public QObject
 {
+    Q_OBJECT
 public:
+    //constructor
+    explicit Rule();
     QString name;
     bool enabled;
     bool active;
@@ -163,6 +173,7 @@ private Q_SLOTS:
 
     void activateCalendarRule(Rule* ruleStruct);
     void deactivateCalendarRule(Rule* ruleStruct);
+    void checkStatus(Rule* ruleStruct);
 
 private:
     Ui::MainWindow *ui;

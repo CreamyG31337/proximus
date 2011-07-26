@@ -10,6 +10,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "rule1.h"
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,8 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     , publisher(new QValueSpacePublisher(QValueSpace::WritableLayer,"/apps/Maemo/Proximus"))
 {
     ui->setupUi(this);
-    // Start the GPS
-    startGPS();
+
     //ptr to dialog
     Ruledialog = 0;    
     //fill current rules list,settings from "/apps/Maemo/Proximus/";
@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
         else
         {
             //critical error - unable to write to gconf
+            QMessageBox::critical(this,"error","error writing data with publisher ");
+            qApp->exit(1);
         }
     }
     ui->chkGPSMode->setChecked(subscriber->value("settings/GPS").Bool);
@@ -47,12 +49,13 @@ MainWindow::MainWindow(QWidget *parent)
         publisher->setValue("rules/Example Rule/Location/RADIUS",(double)250);
         publisher->setValue("rules/Example Rule/Location/LONGITUDE",(double)-113.485336);
         publisher->setValue("rules/Example Rule/Location/LATITUDE",(double)53.533064);
-
         publisher->sync();
     }
     //update rules list if anything changes
     QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesStorageChanged()));
     rulesStorageChanged();//call once now to populate initial rules
+    // Start the GPS
+    startGPS();
 }
 
 MainWindow::~MainWindow()
@@ -118,6 +121,7 @@ void MainWindow::showExpanded()
 }
 
 void MainWindow::rulesStorageChanged() {
+
     //setup memory structure used to keep track of rules being active or not
     //also recreate qstringlist obj on screen
     //as this DOES NOT happen often, it's okay to recreate from scratch
@@ -125,45 +129,54 @@ void MainWindow::rulesStorageChanged() {
     ui->listWidgetRules->clear();
 
     //fill list
-            Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
+    Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
         //TODO: file bug and replace this retarded line of code with a simple "isValid" check. not holding my breath.
         if (!subscriber->value(strRuleName + "/deleted",true).toBool() == true)//if 'not deleted' (reset values is NOT working as it should, buggy??)
         {
             ui->listWidgetRules->addItem(strRuleName);//add name to screen list
-            if (subscriber->value(strRuleName + "/enabled").toBool() == true)//if enabled
+
+            if (subscriber->value(strRuleName + "/enabled").toBool() == true){//if enabled
+                Rule* newRule = new Rule();
+                newRule->name = strRuleName;
+                Rules.insert(strRuleName,newRule);
                 ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::green);
+                newRule->enabled = true;
                 //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::green);
-            else
-                ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::red);
-                //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::red);
-            //need some objects
-           // DataLocation ruleDataLoc;
-            DataLocation* ptrRuleDataLoc = new DataLocation;//this one needs to be ptr because it's a qobject
-            DataTime ruleDataTime;
-            DataCalendar ruleDataCal;
-            //fill them -- TODO: need to check if the paths exist, default them
-            ptrRuleDataLoc->active = false;//we can default the status to false, it will be re-evaluated within a minute
-            ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
-            ptrRuleDataLoc->inverseCond = subscriber->value(strRuleName + "/Location/NOT").toBool();
-            ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
-            ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
-            ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
-            if (ptrRuleDataLoc->enabled)
-            {
-                ptrRuleDataLoc->areaMon = initAreaMonitor(ptrRuleDataLoc);
+                DataLocation* ptrRuleDataLoc = new DataLocation;
+                ptrRuleDataLoc->setParent(newRule);
+                newRule->data.locationRule = ptrRuleDataLoc;
+                connect(newRule->data.locationRule, SIGNAL(activeChanged(Rule*)),
+                        this,SLOT(checkStatus(Rule*)));
+
+                //fill them -- TODO: need to check if the paths exist, default them
+                ptrRuleDataLoc->active = false;//we can default the status to false, it will be re-evaluated within a minute
+                ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
+                ptrRuleDataLoc->inverseCond = subscriber->value(strRuleName + "/Location/NOT").toBool();
+                ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
+                ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
+                ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
+                if (ptrRuleDataLoc->enabled)
+                {
+                    ptrRuleDataLoc->areaMon = initAreaMonitor(ptrRuleDataLoc);
+                }
+
+                newRule->data.timeRule.active = false;
+                newRule->data.timeRule.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
+                newRule->data.timeRule.inverseCond = subscriber->value(strRuleName + "/Time/NOT").toBool();
+                newRule->data.timeRule.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
+                newRule->data.timeRule.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
+
+                newRule->data.calendarRule.active = false;
+                newRule->data.calendarRule.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
+                newRule->data.calendarRule.inverseCond = subscriber->value(strRuleName + "/Calendar/NOT").toBool();
+                newRule->data.calendarRule.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
             }
-
-            ruleDataTime.active = false;
-            ruleDataTime.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
-            ruleDataTime.inverseCond = subscriber->value(strRuleName + "/Time/NOT").toBool();
-            ruleDataTime.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
-            ruleDataTime.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
-
-            ruleDataCal.active = false;
-            ruleDataCal.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
-            ruleDataCal.inverseCond = subscriber->value(strRuleName + "/Calendar/NOT").toBool();
-            ruleDataCal.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
-
+            else{//rule was not enabled, we skipped all of the above
+                ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::red);
+                //newRule->enabled = false;
+                //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::red);
+                //return?
+            }
         }
     }
 }
@@ -177,7 +190,7 @@ void MainWindow::updateCalendar()
     //get list of all upcoming calendar events
     QList<QOrganizerItem> entries =
              defaultManager.items(QDateTime::currentDateTime(),//not sure if this returns events already started
-                                  QDateTime::currentDateTime().addSecs(3600));
+                                  QDateTime::currentDateTime().addSecs(3600)); //read next hour of calendar data
     //for each calendar rule
     Q_FOREACH(Rule* ruleStruct,  Rules) {
         bool foundMatch = false;
@@ -236,13 +249,15 @@ void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
     if (geoPositionInfo.isValid())
     {
         //gps never stops
-        locationDataSource->setUpdateInterval(30000);//30 sec //TODO: for meego we should sync this to WAKEUP_SLOT_30_SEC in MeeGo::QmHeartbeat
+        //locationDataSource->setUpdateInterval(30*1000);//30 sec //TODO: for meego we should sync this to WAKEUP_SLOT_30_SEC in MeeGo::QmHeartbeat
         // Get the current location as latitude and longitude
         QGeoCoordinate geoCoordinate = geoPositionInfo.coordinate();
         qreal latitude = geoCoordinate.latitude();
         qreal longitude = geoCoordinate.longitude();
         ui->lblLongitude->setText(QString::number(longitude));
         ui->lblLatitude->setText(QString::number(latitude));
+        ui->lblLastUpdatedTime->setText(geoPositionInfo.timestamp().toString());
+        //qDebug() << Rules["Example Rule"]->data.timeRule.time1;
     }
 }
 
@@ -262,14 +277,17 @@ void MainWindow::startGPS()
                              SLOT(positionUpdated(QGeoPositionInfo)));
             // Start listening for position updates
             locationDataSource->startUpdates();
-            if (ui->chkGPSMode->isChecked())
+            if (ui->chkGPSMode->isChecked()){
                 locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
-            else
+            }
+            else{
                 locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+            }
 
         } else {
             // Not able to obtain the location data source
             // TODO: Error handling
+            QMessageBox::critical(this,"error","GPS failure");
         }
     } else {
         // Start listening for position updates
@@ -277,17 +295,22 @@ void MainWindow::startGPS()
     }
     //set up timer for calendar,
     #if defined(Q_WS_MAEMO_5)
-        //??
+        //worry about this later
     #else
         #if defined (Q_WS_SIMULATOR)
-            //??
+            //
         #else //harmattan or symbian...
             QSystemAlignedTimer *newTimer = new QSystemAlignedTimer(this);
             connect (newTimer, SIGNAL(timeout()),this,SLOT(updateCalendar()));
-            newTimer->start(60*45,60*60);
+            newTimer->start(60*45,60*60); //timer should fire every 45-60 min
         #endif
     #endif
+}
 
+//called any time we activate / deactivate a rule setting
+//this just does some boolean math to check if the whole rule is now active or inactive
+void MainWindow::checkStatus(Rule* ruleStruct)
+{
 
 }
 
@@ -295,11 +318,17 @@ void MainWindow::startGPS()
 QGeoAreaMonitor * MainWindow::initAreaMonitor(DataLocation *& Dataloc)
 {
     // Create the area monitor
-    QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor(this);
+    QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor(Dataloc);
+    if (monitor == NULL){
+         QMessageBox::critical(this,"error","failed to create monitor");
+         return NULL;
+    }
 
     // Connect the area monitoring signals to the corresponding slots
-    connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
-            Dataloc, SLOT(areaEntered(QGeoPositionInfo)));
+    if (!connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
+             Dataloc, SLOT(areaEntered(QGeoPositionInfo))))
+        QMessageBox::critical(this,"error","error connecting slots");
+
     connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
             Dataloc, SLOT(areaExited(QGeoPositionInfo)));
     monitor->setCenter(Dataloc->location);
@@ -314,6 +343,7 @@ void DataLocation::areaEntered(const QGeoPositionInfo &update) {
         this->active = true;
     else
         this->active = false;
+    Q_EMIT activeChanged((Rule*)this->parent());
 }
 
 void DataLocation::areaExited(const QGeoPositionInfo &update) {
@@ -323,7 +353,27 @@ void DataLocation::areaExited(const QGeoPositionInfo &update) {
          this->active = false;
      else
          this->active = true;
+     Q_EMIT activeChanged((Rule*)this->parent());
 }
+
+Rule::Rule()
+{
+
+}
+
+RuleData::RuleData()
+    :locationRule(new DataLocation)
+{
+//init ptr to datalocation obj
+
+}
+
+DataLocation::DataLocation()
+    //:areaMon(new QGeoAreaMonitor::createDefaultMonitor())
+{
+
+}
+
 
 void MainWindow::startSatelliteMonitor()
 {
@@ -398,6 +448,7 @@ void MainWindow::on_chkGPSMode_clicked()
     }
     else
     {
+        QMessageBox::critical(this,"error","something bad thing happened");
         //error
     }
 
