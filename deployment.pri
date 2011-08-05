@@ -5,6 +5,7 @@
 # It is recommended not to modify this file, since newer versions of Qt Creator
 # may offer an updated version of it.
 
+
 defineTest(qtcAddDeployment) {
 for(deploymentfolder, DEPLOYMENTFOLDERS) {
     item = item$${deploymentfolder}
@@ -98,6 +99,7 @@ symbian {
     export(target.path)
     INSTALLS += desktopfile icon target
 }
+
 
 export (ICON)
 export (INSTALLS)

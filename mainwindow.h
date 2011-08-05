@@ -32,6 +32,7 @@
 #include <QOrganizerEventTime>
 #include <QOrganizerItemDetail>
 #include <QApplication>
+#include <QSettings>
 
 #if defined(Q_WS_MAEMO_5)
     //dunno
@@ -185,8 +186,9 @@ private:
      */
     void startGPS();
     QPointer<Rule1> Ruledialog;
-    QValueSpaceSubscriber *subscriber;
-    QValueSpacePublisher *publisher;
+//    QValueSpaceSubscriber *subscriber;
+//    QValueSpacePublisher *publisher;
+    QSettings *settings;
     QHash<QString, Rule*> Rules;
 };
 

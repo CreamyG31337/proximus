@@ -54,7 +54,7 @@ install: build
 	mv /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop || echo -n
 	sed 's:Exec=.*:Exec=/usr/local/bin/ProfileAutoSwitch:' /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop > /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed || echo -n
 	mv /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop.sed /I/Qt/ProfileAutoSwitch/debian/profileautoswitch/usr/share/applications/ProfileAutoSwitch.desktop || echo -n
-
+	update-contextkit-providers
 
 # Build architecture-independent files here.
 binary-indep: build install

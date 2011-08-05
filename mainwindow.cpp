@@ -14,45 +14,75 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), subscriber(new QValueSpaceSubscriber("/apps/Maemo/Proximus"))
-    , publisher(new QValueSpacePublisher(QValueSpace::WritableLayer,"/apps/Maemo/Proximus"))
+    : QMainWindow(parent), ui(new Ui::MainWindow)
+//    , subscriber(new QValueSpaceSubscriber("/net/appcheck/Proximus"))
+//    , publisher(new QValueSpacePublisher(QValueSpace::WritableLayer,"/net/appcheck/Proximus"))
+    , settings(new QSettings("FakeCompany","Proximus") )
 {
+    QCoreApplication::setOrganizationName("FakeCompany");
+    QCoreApplication::setOrganizationDomain("appcheck.net");
+    QCoreApplication::setApplicationName("Proximus");
     ui->setupUi(this);
 
     //ptr to dialog
     Ruledialog = 0;    
-    //fill current rules list,settings from "/apps/Maemo/Proximus/";
+    //fill current rules list,settings from "/net/appcheck/Proximus/";
 
-    if (!subscriber->value().isValid()) //need to create /apps/Maemo/Proximus/
-    {
-        if (publisher->isConnected())
-        {   //set default options
-            publisher->setValue("settings/GPS",false);
-        }
-        else
-        {
-            //critical error - unable to write to gconf
-            QMessageBox::critical(this,"error","error writing data with publisher ");
-            qApp->exit(1);
-        }
-    }
-    ui->chkGPSMode->setChecked(subscriber->value("settings/GPS").Bool);
 
-    subscriber->cd("rules");
-    if (!subscriber->value().isValid()) //need to create /apps/Maemo/Proximus/rules
+    if (!settings->contains("settings")) //first run, need to create default settings
     {
-        //set default rule, disable it
-        publisher->setValue("rules/Example Rule/deleted",(bool)false);//for some reason setting the value of a node that contains subkeys doesn't work properly
-        publisher->setValue("rules/Example Rule/enabled",(bool)false);//so i have to program it this stupid way instead.
-        publisher->setValue("rules/Example Rule/Location/enabled",(bool)true);
-        publisher->setValue("rules/Example Rule/Location/NOT",(bool)false);
-        publisher->setValue("rules/Example Rule/Location/RADIUS",(double)250);
-        publisher->setValue("rules/Example Rule/Location/LONGITUDE",(double)-113.485336);
-        publisher->setValue("rules/Example Rule/Location/LATITUDE",(double)53.533064);
-        publisher->sync();
+        settings->setValue("settings/GPS",false);
+
     }
+
+//    if (!subscriber->value().isValid()) //need to create /net/appcheck/Proximus/
+//    {
+//        if (publisher->isConnected())
+//        {   //set default options
+//            publisher->setValue("settings/GPS",false);
+//        }
+//        else
+//        {
+//            //critical error - unable to write to gconf
+//            QMessageBox::critical(this,"error","error writing data with publisher ");
+//            qApp->exit(1);
+//        }
+//    }
+
+//    ui->chkGPSMode->setChecked(subscriber->value("settings/GPS").Bool);
+    ui->chkGPSMode->setChecked(settings->value("settings/GPS").Bool);
+
+    if (!settings->contains("rules")) //first run, need to create default rules
+    {
+        settings->beginGroup("rules");
+        settings->setValue("Example Rule/deleted",(bool)false);//for some reason setting the value of a node that contains subkeys doesn't work properly
+        settings->setValue("Example Rule/enabled",(bool)false);//so i have to program it this stupid way instead.
+        settings->setValue("Example Rule/Location/enabled",(bool)true);
+        settings->setValue("Example Rule/Location/NOT",(bool)false);
+        settings->setValue("Example Rule/Location/RADIUS",(double)250);
+        settings->setValue("Example Rule/Location/LONGITUDE",(double)-113.485336);
+        settings->setValue("Example Rule/Location/LATITUDE",(double)53.533064);
+        settings->endGroup();
+    }
+
+//    subscriber->cd("rules");
+//    if (!subscriber->value().isValid()) //need to create /net/appcheck/Proximus/rules
+//    {
+//        //set default rule, disable it
+//        publisher->setValue("rules/Example Rule/deleted",(bool)false);//for some reason setting the value of a node that contains subkeys doesn't work properly
+//        publisher->setValue("rules/Example Rule/enabled",(bool)false);//so i have to program it this stupid way instead.
+//        publisher->setValue("rules/Example Rule/Location/enabled",(bool)true);
+//        publisher->setValue("rules/Example Rule/Location/NOT",(bool)false);
+//        publisher->setValue("rules/Example Rule/Location/RADIUS",(double)250);
+//        publisher->setValue("rules/Example Rule/Location/LONGITUDE",(double)-113.485336);
+//        publisher->setValue("rules/Example Rule/Location/LATITUDE",(double)53.533064);
+//        publisher->sync();
+//    }
     //update rules list if anything changes
-    QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesStorageChanged()));
+
+
+    //QObject::connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(rulesStorageChanged()));
+
     rulesStorageChanged();//call once now to populate initial rules
     // Start the GPS
     startGPS();
@@ -60,10 +90,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    settings->sync();
     delete ui;
     delete Ruledialog;
-    delete subscriber;
-    delete publisher;
+//    delete subscriber;
+//    delete publisher;
+    delete settings;
 }
 
 void MainWindow::setOrientation(ScreenOrientation orientation)
@@ -129,13 +161,16 @@ void MainWindow::rulesStorageChanged() {
     ui->listWidgetRules->clear();
 
     //fill list
-    Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
+    settings->beginGroup("rules");
+    //Q_FOREACH(const QString &strRuleName, subscriber->subPaths()){//for each rule
+    Q_FOREACH(const QString &strRuleName, settings->childGroups()){//for each rule
         //TODO: file bug and replace this retarded line of code with a simple "isValid" check. not holding my breath.
-        if (!subscriber->value(strRuleName + "/deleted",true).toBool() == true)//if 'not deleted' (reset values is NOT working as it should, buggy??)
-        {
+        //if (!subscriber->value(strRuleName + "/deleted",true).toBool() == true)//if 'not deleted' (reset values is NOT working as it should, buggy??)
+        //{
             ui->listWidgetRules->addItem(strRuleName);//add name to screen list
 
-            if (subscriber->value(strRuleName + "/enabled").toBool() == true){//if enabled
+//            if (subscriber->value(strRuleName + "/enabled").toBool() == true){//if enabled
+              if (settings->value(strRuleName + "/enabled").toBool() == true){//if enabled
                 Rule* newRule = new Rule();
                 newRule->name = strRuleName;
                 Rules.insert(strRuleName,newRule);
@@ -150,26 +185,38 @@ void MainWindow::rulesStorageChanged() {
 
                 //fill them -- TODO: need to check if the paths exist, default them
                 ptrRuleDataLoc->active = false;//we can default the status to false, it will be re-evaluated within a minute
-                ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
-                ptrRuleDataLoc->inverseCond = subscriber->value(strRuleName + "/Location/NOT").toBool();
-                ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
-                ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
-                ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
+//                ptrRuleDataLoc->enabled = subscriber->value(strRuleName + "/Location/enabled").toBool();
+//                ptrRuleDataLoc->inverseCond = subscriber->value(strRuleName + "/Location/NOT").toBool();
+//                ptrRuleDataLoc->radius = subscriber->value(strRuleName + "/Location/RADIUS").toInt();
+//                ptrRuleDataLoc->location.setLongitude(subscriber->value(strRuleName + "/Location/LONGITUDE").toDouble());
+//                ptrRuleDataLoc->location.setLatitude(subscriber->value(strRuleName + "/Location/LATITUDE").toDouble());
+                ptrRuleDataLoc->enabled = settings->value(strRuleName + "/Location/enabled").toBool();
+                ptrRuleDataLoc->inverseCond = settings->value(strRuleName + "/Location/NOT").toBool();
+                ptrRuleDataLoc->radius = settings->value(strRuleName + "/Location/RADIUS").toInt();
+                ptrRuleDataLoc->location.setLongitude(settings->value(strRuleName + "/Location/LONGITUDE").toDouble());
+                ptrRuleDataLoc->location.setLatitude(settings->value(strRuleName + "/Location/LATITUDE").toDouble());
                 if (ptrRuleDataLoc->enabled)
                 {
                     ptrRuleDataLoc->areaMon = initAreaMonitor(ptrRuleDataLoc);
                 }
 
                 newRule->data.timeRule.active = false;
-                newRule->data.timeRule.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
-                newRule->data.timeRule.inverseCond = subscriber->value(strRuleName + "/Time/NOT").toBool();
-                newRule->data.timeRule.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
-                newRule->data.timeRule.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
+//                newRule->data.timeRule.enabled = subscriber->value(strRuleName + "/Time/enabled").toBool();
+//                newRule->data.timeRule.inverseCond = subscriber->value(strRuleName + "/Time/NOT").toBool();
+//                newRule->data.timeRule.time1 = subscriber->value(strRuleName + "/Time/TIME1").toTime();
+//                newRule->data.timeRule.time2 = subscriber->value(strRuleName + "/Time/TIME2").toTime();
+                newRule->data.timeRule.enabled = settings->value(strRuleName + "/Time/enabled").toBool();
+                newRule->data.timeRule.inverseCond = settings->value(strRuleName + "/Time/NOT").toBool();
+                newRule->data.timeRule.time1 = settings->value(strRuleName + "/Time/TIME1").toTime();
+                newRule->data.timeRule.time2 = settings->value(strRuleName + "/Time/TIME2").toTime();
 
                 newRule->data.calendarRule.active = false;
-                newRule->data.calendarRule.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
-                newRule->data.calendarRule.inverseCond = subscriber->value(strRuleName + "/Calendar/NOT").toBool();
-                newRule->data.calendarRule.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
+//                newRule->data.calendarRule.enabled = subscriber->value(strRuleName + "/Calendar/enabled").toBool();
+//                newRule->data.calendarRule.inverseCond = subscriber->value(strRuleName + "/Calendar/NOT").toBool();
+//                newRule->data.calendarRule.keywords = subscriber->value(strRuleName + "/Calendar/KEYWORDS").toString();
+                newRule->data.calendarRule.enabled = settings->value(strRuleName + "/Calendar/enabled").toBool();
+                newRule->data.calendarRule.inverseCond = settings->value(strRuleName + "/Calendar/NOT").toBool();
+                newRule->data.calendarRule.keywords = settings->value(strRuleName + "/Calendar/KEYWORDS").toString();
             }
             else{//rule was not enabled, we skipped all of the above
                 ui->listWidgetRules->item(ui->listWidgetRules->count() - 1)->setForeground(Qt::red);
@@ -177,8 +224,9 @@ void MainWindow::rulesStorageChanged() {
                 //ui->listWidgetRules->findItems(str,Qt::MatchExactly).first()->setForeground(Qt::red);
                 //return?
             }
-        }
+       // }
     }
+    settings->endGroup();
 }
 
 //triggered by a heartbeat timer object every 45 min or so,
@@ -257,6 +305,7 @@ void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
         ui->lblLongitude->setText(QString::number(longitude));
         ui->lblLatitude->setText(QString::number(latitude));
         ui->lblLastUpdatedTime->setText(geoPositionInfo.timestamp().toString());
+        ui->lblAccuracy->setText(QString::number(geoPositionInfo.attribute(QGeoPositionInfo::HorizontalAccuracy)) + "m");
         //qDebug() << Rules["Example Rule"]->data.timeRule.time1;
     }
 }
@@ -264,35 +313,29 @@ void MainWindow::positionUpdated(QGeoPositionInfo geoPositionInfo)
 void MainWindow::startGPS()
 {
     // Obtain the location data source if it is not obtained already
-    if (!locationDataSource)
-    {
+    if (!locationDataSource){
         locationDataSource = QGeoPositionInfoSource::createDefaultSource(this);
-        if (locationDataSource)
-        {
-            // Whenever the location data source signals that the current
-            // position is updated, the positionUpdated function is called.
-            QObject::connect(locationDataSource,
-                             SIGNAL(positionUpdated(QGeoPositionInfo)),
-                             this,
-                             SLOT(positionUpdated(QGeoPositionInfo)));
-            // Start listening for position updates
-            locationDataSource->startUpdates();
-            if (ui->chkGPSMode->isChecked()){
-                locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
-            }
-            else{
-                locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
-            }
-
-        } else {
+        if (!locationDataSource){
             // Not able to obtain the location data source
             // TODO: Error handling
             QMessageBox::critical(this,"error","GPS failure");
+            return;
         }
-    } else {
-        // Start listening for position updates
-        locationDataSource->startUpdates();
     }
+    // Whenever the location data source signals that the current
+    // position is updated, the positionUpdated function is called.
+    QObject::connect(locationDataSource,
+                     SIGNAL(positionUpdated(QGeoPositionInfo)),
+                     this,
+                     SLOT(positionUpdated(QGeoPositionInfo)));
+
+    if (ui->chkGPSMode->isChecked())
+        locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);    
+    else
+        locationDataSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+    // Start listening for position updates
+    locationDataSource->startUpdates();
+
     //set up timer for calendar,
     #if defined(Q_WS_MAEMO_5)
         //worry about this later
@@ -440,18 +483,17 @@ void MainWindow::on_btnNewRule_clicked()
 
 void MainWindow::on_chkGPSMode_clicked()
 {
-    if (publisher->isConnected())
-    {
-        publisher->setValue("settings/GPS",ui->chkGPSMode->isChecked());
-        //todo: restart gps
 
-    }
-    else
-    {
-        QMessageBox::critical(this,"error","something bad thing happened");
-        //error
-    }
-
+    settings->setValue("settings/GPS",ui->chkGPSMode->isChecked());
+//    if (publisher->isConnected())
+//    {
+//        publisher->setValue("settings/GPS",ui->chkGPSMode->isChecked());
+//    }
+//    else
+//    {
+//        QMessageBox::critical(this,"error","failed to write settings");
+//    }
+    startGPS();//(restart)
 }
 
 void MainWindow::on_btnEdit_clicked()
@@ -479,11 +521,14 @@ void MainWindow::on_btnDelete_clicked()
                              QMessageBox::Yes | QMessageBox::No,
                              QMessageBox::No)
               );
-    if (ret == QMessageBox::Yes){//hi, i'm nokia and i can't make a resetValue function that works properly. this will NOT delete the root node for some stupid reason. more hours of my life gone.
-        publisher->resetValue("rules/" + ui->listWidgetRules->currentItem()->text());//yeah so it doesn't seem to be doing ANYTHING right now.
-        publisher->setValue("rules/" + ui->listWidgetRules->currentItem()->text() + "/deleted",true);//i guess i will write stupid code then.
+    if (ret == QMessageBox::Yes){
+        //hi, i'm nokia and i can't make a resetValue function that works properly. this will NOT delete the root node for some stupid reason. more hours of my life gone.
+//        publisher->resetValue("rules/" + ui->listWidgetRules->currentItem()->text());//yeah so it doesn't seem to be doing ANYTHING right now.
+//        publisher->setValue("rules/" + ui->listWidgetRules->currentItem()->text() + "/deleted",true);//i guess i will write stupid code then.
+        settings->remove("rules/" + ui->listWidgetRules->currentItem()->text());
     }
-    publisher->sync();
+    settings->sync();
+//    publisher->sync();
 }
 
 void MainWindow::on_listWidgetRules_currentTextChanged(const QString &currentText)
@@ -501,7 +546,8 @@ void MainWindow::on_listWidgetRules_currentTextChanged(const QString &currentTex
         ui->btnEnable->setEnabled(true);
         ui->btnEdit->setEnabled(true);
     }   
-    if (subscriber->value(currentText + "/enabled").toBool())//enabled
+//  if (subscriber->value(currentText + "/enabled").toBool())//enabled
+    if (settings->value("rules/" + currentText + "/enabled").toBool())//enabled
         ui->btnEnable->setText("Disable");
     else//disabled
         ui->btnEnable->setText("Enable");
@@ -514,13 +560,15 @@ void MainWindow::on_btnEnable_clicked()
 
     if ( ui->btnEnable->text() == "Enable")
     {
-        publisher->setValue("rules/" + curr + "/enabled",true);
+//      publisher->setValue("rules/" + curr + "/enabled",true);
+        settings->setValue("rules/" + curr + "/enabled",true);
         ui->listWidgetRules->currentItem()->setForeground(Qt::green);
         ui->btnEnable->setText("Disable");
     }
     else
     {
-        publisher->setValue("rules/" + curr + "/enabled",false);
+        settings->setValue("rules/" + curr + "/enabled",false);
+//      publisher->setValue("rules/" + curr + "/enabled",false);
         ui->listWidgetRules->currentItem()->setForeground(Qt::red);
         ui->btnEnable->setText("Enable");
     }

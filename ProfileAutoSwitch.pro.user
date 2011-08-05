@@ -614,7 +614,7 @@
        <value type="QString"></value>
       </valuelist>
       <valuelist key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes" type="QVariantList">
-       <value type="QDateTime">2011-07-23T21:15:56</value>
+       <value type="QDateTime">2011-08-02T00:32:30</value>
       </valuelist>
      </valuemap>
      <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>

@@ -38,6 +38,14 @@ maemo5 {
     CONFIG += mobility
     #no idea what to do for this...
     } else {
+    #forget it, this "contextreg" is requiring too many changes from what worked fine in simulator / maemo5 and every other platform.
+    #online docs are not explaining if this is really even a permanent store or how to create dynamic keys with stupid xml requirements.
+    #qt immobility more like it...
+    #contextreg.files = proximus.context #yeah so the docs say use .source but IT DOESNT WORK
+    #contextreg.path = /usr/share/contextkit/providers
+    #contextreg.extra = update-contextkit-providers #this appears to need root?? wtf?
+    #INSTALLS += contextreg
+
     #harmattan (or symbian). Why can't we just get an environment macro for harmattan? >:(
     CONFIG += mobility
     #conflict in some dbus stuff i need from glib-2.0 which is the only way to set active profile in harmattan at this time >:(
