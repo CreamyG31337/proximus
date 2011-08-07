@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Wed Aug 3 00:53:06 2011
+** Created: Sat Aug 6 19:05:05 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -157,10 +157,10 @@ static const uint qt_meta_data_MainWindow[] = {
       28,   12,   11,   11, 0x0a,
       73,   62,   11,   11, 0x0a,
      122,   62,   11,   11, 0x0a,
-     197,  189,  172,   11, 0x08,
-     229,   11,   11,   11, 0x08,
-     253,   11,   11,   11, 0x08,
-     277,   11,   11,   11, 0x08,
+     172,   11,   11,   11, 0x0a,
+     219,  211,  194,   11, 0x08,
+     251,   11,   11,   11, 0x08,
+     275,   11,   11,   11, 0x08,
      299,   11,   11,   11, 0x08,
      323,   11,   11,   11, 0x08,
      344,   11,   11,   11, 0x08,
@@ -179,12 +179,12 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "positionUpdated(QGeoPositionInfo)\0"
     "satellites\0satellitesInUseUpdated(QList<QGeoSatelliteInfo>)\0"
     "satellitesInViewUpdated(QList<QGeoSatelliteInfo>)\0"
-    "QGeoAreaMonitor*\0Dataloc\0"
-    "initAreaMonitor(DataLocation*&)\0"
+    "rulesStorageChanged()\0QGeoAreaMonitor*\0"
+    "Dataloc\0initAreaMonitor(DataLocation*&)\0"
     "startSatelliteMonitor()\0on_btnNewRule_clicked()\0"
-    "rulesStorageChanged()\0on_chkGPSMode_clicked()\0"
-    "on_btnEdit_clicked()\0on_btnDelete_clicked()\0"
-    "currentText\0on_listWidgetRules_currentTextChanged(QString)\0"
+    "on_chkGPSMode_clicked()\0on_btnEdit_clicked()\0"
+    "on_btnDelete_clicked()\0currentText\0"
+    "on_listWidgetRules_currentTextChanged(QString)\0"
     "on_btnEnable_clicked()\0updateCalendar()\0"
     "ruleStruct\0activateCalendarRule(Rule*)\0"
     "deactivateCalendarRule(Rule*)\0"
@@ -223,11 +223,11 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 0: positionUpdated((*reinterpret_cast< QGeoPositionInfo(*)>(_a[1]))); break;
         case 1: satellitesInUseUpdated((*reinterpret_cast< const QList<QGeoSatelliteInfo>(*)>(_a[1]))); break;
         case 2: satellitesInViewUpdated((*reinterpret_cast< const QList<QGeoSatelliteInfo>(*)>(_a[1]))); break;
-        case 3: { QGeoAreaMonitor* _r = initAreaMonitor((*reinterpret_cast< DataLocation*(*)>(_a[1])));
+        case 3: rulesStorageChanged(); break;
+        case 4: { QGeoAreaMonitor* _r = initAreaMonitor((*reinterpret_cast< DataLocation*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QGeoAreaMonitor**>(_a[0]) = _r; }  break;
-        case 4: startSatelliteMonitor(); break;
-        case 5: on_btnNewRule_clicked(); break;
-        case 6: rulesStorageChanged(); break;
+        case 5: startSatelliteMonitor(); break;
+        case 6: on_btnNewRule_clicked(); break;
         case 7: on_chkGPSMode_clicked(); break;
         case 8: on_btnEdit_clicked(); break;
         case 9: on_btnDelete_clicked(); break;

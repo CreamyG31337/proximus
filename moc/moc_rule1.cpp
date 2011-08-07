@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'rule1.h'
 **
-** Created: Tue Aug 2 00:38:52 2011
+** Created: Sat Aug 6 19:05:06 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

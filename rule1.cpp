@@ -8,7 +8,7 @@
 #include <QValueSpaceSubscriber>
 //#include <QSystemDeviceInfo> //currently useless since can't switch profiles only read them
 
-Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource> locationDataSource) :
+Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource> locationDataSource, QPointer<QSettings> settings) :
     QDialog(parent),
     ui(new Ui::Rule1)
 {
@@ -27,6 +27,7 @@ Rule1::Rule1(QWidget *parent, QString RuleName, QPointer<QGeoPositionInfoSource>
     strOriginalRuleName = RuleName;
     //save original rule name so we can tell if it's renamed
     locationDataSource2 = locationDataSource;
+    settings2 = settings;
     this->setAttribute(Qt::WA_DeleteOnClose);
     disconnect(ui->buttonBox_ruleSaveCancel, SIGNAL(accepted()), this, SLOT(accept()));//qt creator connects this by default which makes it impossible to validate things and abort a "save"
     //fill available profiles to combo box
@@ -41,28 +42,29 @@ Rule1::~Rule1()
 }
 
 void Rule1::readCurrentSettings()
-{
-    QValueSpaceSubscriber subscriber;
-    subscriber.setPath("/apps/Maemo/Proximus/rules/" + strOriginalRuleName);
+{    
+    settings2->beginGroup("rules/" + strOriginalRuleName);   
     //ACTION
-    ui->chkRunCommand->setChecked(subscriber.value("Actions/Run/enabled",false).toBool());
-    ui->txtProgram2Run->setText(subscriber.value("Actions/Run/COMMAND","").toString().replace("//","/"));
+    ui->chkRunCommand->setChecked(settings2->value("Actions/Run/enabled",false).toBool());
+    ui->txtProgram2Run->setText(settings2->value("Actions/Run/COMMAND","").toString().replace("//","/"));
     //LOCATION
-    ui->chk_loc_enabled->setChecked(subscriber.value("Location/enabled",false).toBool());//default to false
-    ui->chk_loc_not->setChecked(subscriber.value("Location/NOT",false).toBool());//default to false
-    ui->txtlocSensitivity->setText(subscriber.value("Location/RADIUS","100").toString()+"m");
-    ui->dial_locSensitivity->setValue(subscriber.value("Location/RADIUS","100").toInt());
-    ui->txtLocLongitude->setText(subscriber.value("Location/LONGITUDE","").toString());
-    ui->txtLocLatitude->setText(subscriber.value("Location/LATITUDE","").toString());
+    ui->chk_loc_enabled->setChecked(settings2->value("Location/enabled",false).toBool());//default to false
+    ui->chk_loc_not->setChecked(settings2->value("Location/NOT",false).toBool());//default to false
+    ui->txtlocSensitivity->setText(settings2->value("Location/RADIUS","100").toString()+"m");
+    ui->dial_locSensitivity->setValue(settings2->value("Location/RADIUS","100").toInt());
+    ui->txtLocLongitude->setText(settings2->value("Location/LONGITUDE","").toString());
+    ui->txtLocLatitude->setText(settings2->value("Location/LATITUDE","").toString());
     //TIMING
-    ui->chk_time_enabled->setChecked(subscriber.value("Time/enabled",false).toBool());//default to false
-    ui->chk_time_not->setChecked(subscriber.value("Time/NOT",false).toBool());//default to false
-    ui->timeEdit->setTime(subscriber.value("Time/TIME1",QTime::currentTime()).toTime());//default to current time
-    ui->timeEdit_2->setTime(subscriber.value("Time/TIME2",QTime::currentTime()).toTime());//default to current time
+    ui->chk_time_enabled->setChecked(settings2->value("Time/enabled",false).toBool());//default to false
+    ui->chk_time_not->setChecked(settings2->value("Time/NOT",false).toBool());//default to false
+    ui->timeEdit->setTime(settings2->value("Time/TIME1",QTime::currentTime()).toTime());//default to current time
+    ui->timeEdit_2->setTime(settings2->value("Time/TIME2",QTime::currentTime()).toTime());//default to current time
     //CALENDAR
-    ui->chk_calendar_enabled->setChecked(subscriber.value("Calendar/enabled",false).toBool());//default to false
-    ui->chk_calendar_not->setChecked(subscriber.value("Calendar/NOT",false).toBool());//default to false
-    ui->txtCalendarKeywords->setText(subscriber.value("Calendar/KEYWORDS","").toString());
+    ui->chk_calendar_enabled->setChecked(settings2->value("Calendar/enabled",false).toBool());//default to false
+    ui->chk_calendar_not->setChecked(settings2->value("Calendar/NOT",false).toBool());//default to false
+    ui->txtCalendarKeywords->setText(settings2->value("Calendar/KEYWORDS","").toString());
+
+    settings2->endGroup();
 }
 
 void Rule1::on_dial_locSensitivity_valueChanged(int value)
@@ -88,43 +90,38 @@ void Rule1::on_buttonBox_ruleSaveCancel_rejected()
 void Rule1::on_buttonBox_ruleSaveCancel_accepted()
 {
     bool closeWindow = false;
-    QString publishPath = "/apps/Maemo/Proximus/rules";
-    QValueSpacePublisher* publisher2;
-    publisher2 = new QValueSpacePublisher(QValueSpace::WritableLayer, publishPath);
+    settings2->beginGroup("rules");
     QString strNewRuleName;
     strNewRuleName = ui->txtRuleName->text();
 
     if (strNewRuleName != strOriginalRuleName)
-    {   //delete old rule, sort of. this function is stupid and doesn't work properly.
-        publisher2->resetValue(strOriginalRuleName);
-        //i guess we can work around this bug for now. FU Nokia.
-        publisher2->setValue(strOriginalRuleName + "/deleted",true);
+    {
+        settings2->remove(strOriginalRuleName);
     }
-    publisher2->setValue(strNewRuleName + "/deleted",false);
-    publisher2->setValue(strNewRuleName + "/enabled", true);
+    settings2->setValue(strNewRuleName + "/enabled", true);
     if (ui->chkRunCommand->isChecked())
     {
-        publisher2->setValue(strNewRuleName + "/Actions/Run/enabled",true);
+        settings2->setValue(strNewRuleName + "/Actions/Run/enabled",true);
     }
     else
     {
-        publisher2->setValue(strNewRuleName + "/Actions/Run/enabled",false);
+        settings2->setValue(strNewRuleName + "/Actions/Run/enabled",false);
     }
     QString strCommand;
     strCommand = ui->txtProgram2Run->text();
     strCommand.replace("/","//");
-    publisher2->setValue(strNewRuleName + "/Actions/Run/COMMAND",strCommand);
+    settings2->setValue(strNewRuleName + "/Actions/Run/COMMAND",strCommand);
     if (ui->chkSwitchProfile->isChecked())
     {
 
     }
     if (ui->chk_loc_enabled)
     {
-        publisher2->setValue(strNewRuleName + "/Location/enabled",true);//enabled
+        settings2->setValue(strNewRuleName + "/Location/enabled",true);//enabled
         if (ui->chk_loc_not->isChecked())
-            publisher2->setValue(strNewRuleName + "/Location/NOT",true);
+            settings2->setValue(strNewRuleName + "/Location/NOT",true);
         else
-            publisher2->setValue(strNewRuleName + "/Location/NOT",false);
+            settings2->setValue(strNewRuleName + "/Location/NOT",false);
         //validator takes care of most, still need to check for blanks and out of range
         if (ui->txtlocSensitivity->text().isEmpty())
         {
@@ -137,19 +134,18 @@ void Rule1::on_buttonBox_ruleSaveCancel_accepted()
         //convert loc sensitivity to int
         QString strlocSens;
         strlocSens = ui->txtlocSensitivity->text();
-        strlocSens.chop(1);
-        //if (ui->txtlocSensitivity->text().toInt())
-        publisher2->setValue(strNewRuleName + "/Location/RADIUS", strlocSens.toInt());
+        strlocSens.chop(1);     
+        settings2->setValue(strNewRuleName + "/Location/RADIUS", strlocSens.toInt());
         //need to check these
         double longitude;
         longitude = ui->txtLocLongitude->text().toDouble();
         double latitude;
         latitude = ui->txtLocLatitude->text().toDouble();
-        publisher2->setValue(strNewRuleName + "/Location/LONGITUDE", longitude);
-        publisher2->setValue(strNewRuleName + "/Location/LATITUDE", latitude);
+        settings2->setValue(strNewRuleName + "/Location/LONGITUDE", longitude);
+        settings2->setValue(strNewRuleName + "/Location/LATITUDE", latitude);
     }
     else
-        publisher2->setValue(strNewRuleName + "/Location/enabled",false);//disabled
+        settings2->setValue(strNewRuleName + "/Location/enabled",false);//disabled
 
     if(ui->chk_time_enabled->isChecked())
     {
@@ -162,37 +158,38 @@ void Rule1::on_buttonBox_ruleSaveCancel_accepted()
              //set flag
             closeWindow = true;
         }
-        publisher2->setValue(strNewRuleName + "/Time/enabled",true);//enabled
+        settings2->setValue(strNewRuleName + "/Time/enabled",true);//enabled
         if (ui->chk_time_not->isChecked())
-            publisher2->setValue(strNewRuleName + "/Time/NOT",true);
+            settings2->setValue(strNewRuleName + "/Time/NOT",true);
         else
-            publisher2->setValue(strNewRuleName + "/Time/NOT",false);
+            settings2->setValue(strNewRuleName + "/Time/NOT",false);
         QTime time;
         time = ui->timeEdit->time();
-        publisher2->setValue(strNewRuleName + "/Time/TIME1",time);
+        settings2->setValue(strNewRuleName + "/Time/TIME1",time);
         time = ui->timeEdit_2->time();
-        publisher2->setValue(strNewRuleName + "/Time/TIME2",time);
+        settings2->setValue(strNewRuleName + "/Time/TIME2",time);
     }
     else
     {
-        publisher2->setValue(strNewRuleName + "/Time",false);//disabled
+        settings2->setValue(strNewRuleName + "/Time/enabled",false);//disabled
     }
     if(ui->chk_calendar_enabled->isChecked())
     {
-        publisher2->setValue(strNewRuleName + "/Calendar/enabled",true);//enabled
+        settings2->setValue(strNewRuleName + "/Calendar/enabled",true);//enabled
         if (ui->chk_calendar_not->isChecked())
-            publisher2->setValue(strNewRuleName + "/Calendar/NOT",true);
+            settings2->setValue(strNewRuleName + "/Calendar/NOT",true);
         else
-            publisher2->setValue(strNewRuleName + "/Calendar/NOT",false);
+            settings2->setValue(strNewRuleName + "/Calendar/NOT",false);
         QString keywords;
         keywords = ui->txtCalendarKeywords->text().toLower();
-        publisher2->setValue(strNewRuleName + "/Calendar/KEYWORDS",keywords);
+        settings2->setValue(strNewRuleName + "/Calendar/KEYWORDS",keywords);
     }
     else
     {
-         publisher2->setValue(strNewRuleName + "/Calendar/enabled",false);//disabled
+         settings2->setValue(strNewRuleName + "/Calendar/enabled",false);//disabled
     }
-    publisher2->sync();
+    settings2->sync();
+    settings2->endGroup();
     if(!closeWindow)
     {
         connect(ui->buttonBox_ruleSaveCancel, SIGNAL(accepted()), this, SLOT(accept()));
@@ -217,8 +214,7 @@ void Rule1::on_btn_loc_fill_map_clicked()
     strlocSens.chop(1);
 
     if (MapDialog == 0)
-    {
-        //MapDialog =  new MapsWidget(this);
+    {     
         MapDialog = new MapWindow(locationDataSource2, (qint16)strlocSens.toInt());
     }
     else

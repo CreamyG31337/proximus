@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<provider bus="session" service="net.appcheck.Proximus">
-  <key name="/net/appcheck/Proximus/settings/GPS" />
-  <key name="/net/appcheck/Proximus/rules" />
-</provider>

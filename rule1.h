@@ -5,6 +5,7 @@
 #include "mapswidget.h"
 #include <QGeoServiceProvider>
 #include <QtCore/QPointer>
+#include <QSettings>
 
 
 #if defined(Q_WS_MAEMO_5)
@@ -30,7 +31,7 @@ class Rule1 : public QDialog
     Q_OBJECT
 
 public:
-    explicit Rule1(QWidget *parent = 0, QString RuleName = "Rule", QPointer<QGeoPositionInfoSource> locationDataSource = 0);
+    explicit Rule1(QWidget *parent = 0, QString RuleName = "Rule", QPointer<QGeoPositionInfoSource> locationDataSource = 0, QPointer<QSettings> settings = 0);
     ~Rule1();
 
 private Q_SLOTS:
@@ -51,6 +52,7 @@ private:
     Ui::Rule1 *ui;
     QPointer<MapWindow> MapDialog;
     QPointer<QGeoPositionInfoSource> locationDataSource2;
+    QPointer<QSettings> settings2;
     QString strOriginalRuleName;
 };
 

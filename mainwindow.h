@@ -146,6 +146,8 @@ public Q_SLOTS:
     void satellitesInViewUpdated(
             const QList<QGeoSatelliteInfo> &satellites);
 
+    void rulesStorageChanged();
+
 private Q_SLOTS:
     /**
      * Initializes one area monitor, returns pointer to it.
@@ -158,7 +160,7 @@ private Q_SLOTS:
 
     void on_btnNewRule_clicked();
 
-    void rulesStorageChanged();
+
 
     void on_chkGPSMode_clicked();
 
@@ -188,7 +190,7 @@ private:
     QPointer<Rule1> Ruledialog;
 //    QValueSpaceSubscriber *subscriber;
 //    QValueSpacePublisher *publisher;
-    QSettings *settings;
+    QPointer<QSettings> settings;
     QHash<QString, Rule*> Rules;
 };
 

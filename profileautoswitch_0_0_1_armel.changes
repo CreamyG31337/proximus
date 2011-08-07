@@ -15,9 +15,9 @@ Changes:
  .
    * Initial Release.
 Checksums-Sha1: 
- 216dbf2499c11e001e4f8cec9e560f20f578e62a 524378 profileautoswitch_0.0.1_armel.deb
+ c733a6e40bd57474c733a11d117f604489c10adb 524008 profileautoswitch_0.0.1_armel.deb
 Checksums-Sha256: 
- 626a0358f913b8b3148b19b0117c9ce9cb7a2a13cabf09a7a23a1b3db2397a8e 524378 profileautoswitch_0.0.1_armel.deb
+ f2df50ce3c519a5030d19fb44eb484f09f3c83ecf90f21f0cbb8d8db14eb5f67 524008 profileautoswitch_0.0.1_armel.deb
 Files: 
- afb85fae8d7b88ca35a4403df495ef80 524378 user/other optional profileautoswitch_0.0.1_armel.deb
+ 4e3817da5fa30ac03fce9505e8a71afb 524008 user/other optional profileautoswitch_0.0.1_armel.deb
 Maemo-Display-Name: proximus
